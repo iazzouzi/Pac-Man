@@ -1,0 +1,20 @@
+{
+    "highscore_filename": "highscore.json",
+    "level": [
+        [20, 20],
+        [21, 21],
+        [22, 22],
+        [23, 23],
+        [24, 24],
+        [25, 25],
+        [26, 26],
+        [27, 27],
+        [28, 28],
+        [29, 29]
+    ],
+    "lives": 3,
+    "points_per_pacgum": 10,
+    "points_per_super_pacgum": 50,
+    "points_per_ghost": 200,
+    "level_max_time": 90
+}

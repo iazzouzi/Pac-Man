@@ -1,6 +1,8 @@
+import json
 from config import Config
 from player import Player
 from mazegen import MazeGen
+from typing import Any
 
 class Engine:
     def __init__(self, config: Config):
@@ -29,8 +31,22 @@ class Engine:
             except Exception as e:
                 raise SystemExit(e)
             player = Player(level[0] / 2, level[1] / 2, self.lives)
-            while (maze.pacgums + maze.super_pacgums) > 0 :
+            while (maze.pacgums + maze.super_pacgums) > 0:
                 if not player.lives:
                     break_loop = True
                     break
-                # zid condition 3la 7sab time ila sala time rah machi game over b7al lives yked restarti fnfss level
+
+    def highscores_caching(self, name: str, score: int):
+        data: list[dict[str, Any]] = []
+        try:
+            with open(self.highscore_filename, "r") as file:
+                data = json.load(file)
+        except (OSError, json.JSONDecodeError, Exception):
+            pass
+        try:
+            with open(self.highscore_filename, "w") as file:
+                data.append({"name": name, "score": score})
+                json.dump(data, file)
+        except (OSError, Exception) as e:
+            print(f"Error occurred while writing to highscore file: {e}")
+

@@ -1,4 +1,3 @@
-from mazegenerator import MazeGenerator
 from config import Config
 
 class Engine:
@@ -18,4 +17,6 @@ class Engine:
 
         self.level_max_time = config.level_max_time
 
-    
+    def game_loop(self):
+        for level in self.level:
+            pass

@@ -31,10 +31,11 @@ class Engine:
             except Exception as e:
                 raise SystemExit(e)
             player = Player(level[0] / 2, level[1] / 2, self.lives)
-            while (maze.pacgums + maze.super_pacgums) > 0:
+            while maze.pacgums_nb:
                 if not player.lives:
                     break_loop = True
                     break
+                maze.pacgums_nb -= 1
 
     def highscores_caching(self, name: str, score: int):
         data: list[dict[str, Any]] = []

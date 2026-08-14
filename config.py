@@ -1,7 +1,7 @@
 class Config:
     def __init__(self, highscore_filename: str, level: list[list[int]],
                  lives: int, points_per_pacgum: int, points_per_super_pacgum: int,
-                 points_per_ghost: int, level_max_time:int):
+                 points_per_ghost: int, level_max_time: float):
 
         self.highscore_filename = highscore_filename
 

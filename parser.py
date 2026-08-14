@@ -26,7 +26,7 @@ class Parser:
           level = [(10, 10), (11, 11), (12, 12), (13, 13),
                    (14, 14), (15, 15), (16, 16), (17, 17), 
                    (18, 18), (19, 19)]
-          config = Config("highscore.json", level, 3, 10, 50, 200, 60)
+          config = Config("highscore.json", level, 3, 10, 50, 200, 60.0)
           return config
 
      @staticmethod
@@ -62,8 +62,8 @@ class Parser:
                          if not isinstance(width, int) or not isinstance(height, int):
                               print("Error: Level dimensions must be integers")
                               break
-                         if width < 3 or width > 30 or height < 3 or height > 30:
-                              print("Error: Level dimensions must be between 3 and 30")
+                         if width < 16 or width > 30 or height < 16 or height > 30:
+                              print("Error: Level dimensions must be between 16 and 30")
                               break
                     else:
                          config.level = level
@@ -110,9 +110,9 @@ class Parser:
                level_max_time = data["level_max_time"]
                if not level_max_time:
                     print("Error: Level max time cannot be empty")
-               elif isinstance(level_max_time, (int, float)) and  0 < level_max_time <= 6000:
+               elif isinstance(level_max_time, float) and  0.0 < level_max_time <= 600.0:
                     config.level_max_time = level_max_time
                else:
-                    print("Error: Level max time must be a positive number between 1 and 6000")
+                    print("Error: Level max time must be a positive float between 0.0 and 600.0")
 
           return config

@@ -1,8 +1,9 @@
 import json
-from config import Config
-from player import Player
-from mazegen import MazeGen
+import time
 from typing import Any
+from player import Player
+from config import Config
+from mazegen import MazeGen
 
 class Engine:
     def __init__(self, config: Config):
@@ -34,7 +35,11 @@ class Engine:
                 raise SystemExit(e)
             player.x = level[0] / 2
             player.y = level[1] / 2
+            start = time.time()
             while maze.pacgums_nb:
+                if time.time() - start > self.level_max_time:
+                    break_loop = True
+                    break
                 if not player.lives:
                     break_loop = True
                     break

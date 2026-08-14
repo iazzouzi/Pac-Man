@@ -10,7 +10,7 @@ class Engine:
 
         self.highscore_filename = config.highscore_filename
 
-        self.level = config.level
+        self.levels = config.levels
 
         self.lives = config.lives
 
@@ -26,7 +26,7 @@ class Engine:
         score = 0
         break_loop = False
         player = Player(lives=self.lives)
-        for level in self.level:
+        for level in self.levels:
             if break_loop:
                 break
             try:
@@ -44,17 +44,30 @@ class Engine:
                     break_loop = True
                     break
                 for ghost in maze.ghosts:
+                    if not ghost.available:
+                        if time.time() - ghost.available_ts > 10:
+                            ghost.available = True
+                    if ghost.edible:
+                        if time.time() - ghost.edible_ts > 10:
+                            ghost.edible = False
                     if player.x == ghost.x and player.y == ghost.y:
-                        player.lives -= 1
+                        if ghost.edible:
+                            score += self.points_per_ghost
+                            ghost.available = False
+                            ghost.available_ts = time.time()
+                        else:
+                            player.lives -= 1
                 for pacgum in maze.pacgums:
                     if player.x == pacgum.x and player.y == pacgum.y:
                         if pacgum.super:
                             score += self.points_per_super_pacgum
+                            for ghost in maze.ghosts:
+                                ghost.edible = True
+                                ghost.edible.ts = time.time()
                         else:
                             score += self.points_per_pacgum
                         pacgum.available = False
                         maze.pacgums_nb -= 1
-
         self.highscores_caching("Test", score)
 
     def highscores_caching(self, name: str, score: int):

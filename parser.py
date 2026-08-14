@@ -23,9 +23,9 @@ class Parser:
 
      @staticmethod
      def configInit() -> Config:
-          level = [(16, 16), (17, 17), (18, 18), (19, 19), (20, 20),
+          levels = [(16, 16), (17, 17), (18, 18), (19, 19), (20, 20),
                    (21, 21), (22, 22), (23, 23), (24, 24), (25, 25)]
-          config = Config("highscore.json", level, 3, 10, 50, 200, 60.0)
+          config = Config("highscore.json", levels, 3, 10, 50, 200, 60.0)
           return config
 
      @staticmethod
@@ -50,14 +50,14 @@ class Parser:
                else:
                     config.highscore_filename = heightscore_filename
 
-          if "level" in data:
-               level = data["level"]
-               if not level:
+          if "levels" in data:
+               levels = data["levels"]
+               if not levels:
                     print("Error: Level cannot be empty")
-               elif len(level) < 10:
+               elif len(levels) < 10:
                     print("Error: Level must contain 10 levels or more")
-               elif isinstance(level, list) and all(isinstance(l, list) and len(l) == 2 for l in level):
-                    for width, height in level:
+               elif isinstance(levels, list) and all(isinstance(l, list) and len(l) == 2 for l in levels):
+                    for width, height in levels:
                          if not isinstance(width, int) or not isinstance(height, int):
                               print("Error: Level dimensions must be integers")
                               break
@@ -65,7 +65,7 @@ class Parser:
                               print("Error: Level dimensions must be between 16 and 30")
                               break
                     else:
-                         config.level = level
+                         config.levels = levels
                else:
                     print("Error: Level must be a list of lists of two integers")
 

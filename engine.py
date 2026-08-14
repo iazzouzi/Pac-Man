@@ -22,8 +22,9 @@ class Engine:
         self.level_max_time = config.level_max_time
 
     def gameLoop(self):
-        break_loop = False
         score = 0
+        break_loop = False
+        player = Player(lives=self.lives)
         for level in self.level:
             if break_loop:
                 break
@@ -31,7 +32,8 @@ class Engine:
                 maze = MazeGen((level[0], level[1]))
             except Exception as e:
                 raise SystemExit(e)
-            player = Player(level[0] / 2, level[1] / 2, self.lives)
+            player.x = level[0] / 2
+            player.y = level[1] / 2
             while maze.pacgums_nb:
                 if not player.lives:
                     break_loop = True

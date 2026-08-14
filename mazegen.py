@@ -12,6 +12,13 @@ class MazeGen(MazeGenerator):
         self.pacgums = []
         for y in range(self._height):
             for x in range(self._width):
-                if y != self._height / 2 and x != self._width / 2:
+                if y == 0 and x == 0:
+                    self.pacgums.append(Pacgum(x, y, super=True))
+                elif y == 0 and x == self._width - 1:
+                    self.pacgums.append(Pacgum(x, y, super=True))
+                elif y == self._height - 1 and x == 0:
+                    self.pacgums.append(Pacgum(x, y, super=True))
+                elif y == self._height - 1 and x == self._width - 1:
+                    self.pacgums.append(Pacgum(x, y, super=True))
+                elif y != self._height / 2 and x != self._width / 2:
                     self.pacgums.append(Pacgum(x, y))
-        

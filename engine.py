@@ -23,6 +23,7 @@ class Engine:
 
     def gameLoop(self):
         break_loop = False
+        score = 0
         for level in self.level:
             if break_loop:
                 break
@@ -35,7 +36,16 @@ class Engine:
                 if not player.lives:
                     break_loop = True
                     break
-                maze.pacgums_nb -= 1
+                for pacgum in maze.pacgums:
+                    if player.x == pacgum.x and player.y == pacgum.y:
+                        if pacgum.super:
+                            score += self.points_per_super_pacgum
+                        else:
+                            score += self.points_per_pacgum
+                        pacgum.available = False
+                        maze.pacgums_nb -= 1
+
+        self.highscores_caching("Test", score)
 
     def highscores_caching(self, name: str, score: int):
         data: list[dict[str, Any]] = []

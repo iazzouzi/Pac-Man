@@ -43,6 +43,9 @@ class Engine:
                 if not player.lives:
                     break_loop = True
                     break
+                for ghost in maze.ghosts:
+                    if player.x == ghost.x and player.y == ghost.y:
+                        player.lives -= 1
                 for pacgum in maze.pacgums:
                     if player.x == pacgum.x and player.y == pacgum.y:
                         if pacgum.super:

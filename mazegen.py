@@ -1,12 +1,16 @@
 from mazegenerator import MazeGenerator
 from pacgum import Pacgum
+from ghost import Ghost
 
 class MazeGen(MazeGenerator):
     def __init__(self, size = (15, 15), perfect = False, entry_cell = (0, 0), exit_cell = (-1, -1), seed = 0):
         super().__init__(size, perfect, entry_cell, exit_cell, seed)
-        self.pacgums: list[Pacgum]
         self.pacgums_nb = size[0] * size[1] - 1
+        self.pacgums: list[Pacgum]
         self.pacgumsInit()
+        self.ghosts: list[Ghost]
+        self.ghostsInit()
+
 
     def pacgumsInit(self):
         self.pacgums = []
@@ -22,3 +26,10 @@ class MazeGen(MazeGenerator):
                     self.pacgums.append(Pacgum(x, y, super=True))
                 elif y != self._height / 2 and x != self._width / 2:
                     self.pacgums.append(Pacgum(x, y))
+
+    def ghostsInit(self):
+        self.ghosts = []
+        self.ghosts.append(Ghost(0, 0))
+        self.ghosts.append(Ghost(self._width - 1, 0))
+        self.ghosts.append(Ghost(0, self._height - 1))
+        self.ghosts.append(Ghost(self._width - 1, self._height - 1))

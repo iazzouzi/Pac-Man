@@ -22,6 +22,38 @@ def maze_to_directions(maze: list[list[int]]) -> list[list[dict[str, bool]]]:
         cells_directions.append(row_maze)
     return cells_directions
 
+
+def draw_cell(
+        screen: surface,
+        row: int,
+        col: int,
+        cell: dict[str, bool]
+        ) -> None:
+
+    x = col * CELL_SIZE
+    y = row * CELL_SIZE
+    if cell['N']:
+        pygame.draw.line(screen, WALL_COLOR,
+                        (x, y),
+                        (x + CELL_SIZE, y),
+                        3)
+    if cell['E']:
+        pygame.draw.line(screen, WALL_COLOR,
+                        (x + CELL_SIZE, y),
+                        (x + CELL_SIZE, y + CELL_SIZE),
+                        3)
+    if cell['S']:
+        pygame.draw.line(screen, WALL_COLOR,
+                        (x, y + CELL_SIZE),
+                        (x + CELL_SIZE, y + CELL_SIZE),
+                        3)
+    if cell['W']:
+        pygame.draw.line(screen, WALL_COLOR,
+                        (x, y),
+                        (x, y + CELL_SIZE),
+                        3)
+
+
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("Pacman")

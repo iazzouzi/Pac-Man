@@ -1,5 +1,6 @@
 import json
 import time
+from algo import next
 from typing import Any
 from models import Player
 from models import Config
@@ -57,8 +58,12 @@ class Engine:
                             ghost.available_ts = time.time()
                         else:
                             player.lives -= 1
+                    # nxt = next(maze.maze, (ghost.x, ghost.y), (player.x, player.y))
+                    # if nxt:
+                    #     ghost.x = nxt[0]
+                    #     ghost.y = nxt[1]
                 for pacgum in maze.pacgums:
-                    if player.x == pacgum.x and player.y == pacgum.y:
+                    if pacgum.available and player.x == pacgum.x and player.y == pacgum.y:
                         if pacgum.super:
                             score += self.points_per_super_pacgum
                             for ghost in maze.ghosts:

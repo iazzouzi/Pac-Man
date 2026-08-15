@@ -1,6 +1,6 @@
 from mazegenerator import MazeGenerator
-from pacgum import Pacgum
-from ghost import Ghost
+from models import Pacgum
+from models import Ghost
 
 class MazeGen(MazeGenerator):
     def __init__(self, size = (15, 15), perfect = False, entry_cell = (0, 0), exit_cell = (-1, -1), seed = 0):

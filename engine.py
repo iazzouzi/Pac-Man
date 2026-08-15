@@ -1,7 +1,7 @@
 import json
 import time
 from typing import Any
-from player import Player
+from models import Player
 from config import Config
 from mazegen import MazeGen
 
@@ -25,7 +25,7 @@ class Engine:
     def gameLoop(self):
         score = 0
         break_loop = False
-        player = Player(lives=self.lives)
+        player = Player(0, 0, lives=self.lives)
         for level in self.levels:
             if break_loop:
                 break

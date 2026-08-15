@@ -1,4 +1,4 @@
-from config import Config
+from models import Config
 import json
 import sys
 import os

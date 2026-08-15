@@ -2,7 +2,7 @@ import json
 import time
 from typing import Any
 from models import Player
-from config import Config
+from models import Config
 from mazegen import MazeGen
 
 class Engine:

@@ -1,5 +1,6 @@
 import pygame
 import webcolors
+import time
 from engine import Engine
 from parser import Parser
 from models import Pacgum, Player
@@ -113,6 +114,7 @@ class GameScreen:
         pygame.display.set_caption("Pacman")
         self.running = True
         self.font = pygame.font.Font(None, 36)
+        self.level_start = time.time()
 
         self.engine = engine
         self.mazegen = self.engine.maze
@@ -169,14 +171,24 @@ class GameScreen:
     def run(self):
         while self.running:
             self.handle_events()
+            if time.time() - self.level_start > self.engine.level_max_time:
+                self.running = False
+                break
+            if not self.engine.player.lives:
+                self.running = False
+                break
             self.engine.update()
             if self.engine.maze.pacgums_nb == 0:
                 if not self.engine.start_next_level():
                     self.running = False
-                    continue
+                    break
 
                 self.update_renderers()
+                self.level_start = time.time()
+
             self.render()
+
+        self.engine.highscores_caching("Test", self.engine.score)
         pygame.quit()
     def handle_events(self):
         for event in pygame.event.get():
@@ -207,6 +219,7 @@ class GameScreen:
         self.player_renderer.draw_player(self.screen)
 
         self.draw_score()
+        self.draw_time()
 
         pygame.display.flip()
     def draw_score(self):
@@ -217,3 +230,16 @@ class GameScreen:
         )
 
         self.screen.blit(score_text, (20, 20))
+    def draw_time(self):
+        remaining = max(
+            0,
+            self.engine.level_max_time - (time.time() - self.level_start)
+        )
+
+        time_text = self.font.render(
+            f"Time: {int(remaining)}",
+            True,
+            SCORE_COLOR
+        )
+
+        self.screen.blit(time_text, (20, 50))

@@ -105,6 +105,7 @@ class PlayerRenderer:
         center_y = (self.player.y * CELL_SIZE + CELL_SIZE // 2 + self.offset_y)
         pygame.draw.circle(screen, PACMAN_COLOR, (center_x, center_y), 15)
 
+
 class GameScreen:
     def __init__(self, engine: Engine):
         pygame.init()
@@ -216,9 +217,3 @@ class GameScreen:
         )
 
         self.screen.blit(score_text, (20, 20))
-
-config = Parser.configSetter()
-engine = Engine(config)
-engine.start_next_level()
-game = GameScreen(engine)
-game.run()

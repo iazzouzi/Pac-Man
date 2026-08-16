@@ -1,12 +1,15 @@
 import pygame
 import webcolors
-from mazegen import MazeGen
-from models import Pacgum
+from engine import Engine
+from parser import Parser
+from models import Pacgum, Player
 
 CELL_SIZE = 50
+SCORE_COLOR = webcolors.name_to_rgb('white')
 WALL_COLOR = webcolors.name_to_rgb('white')
 PACGUM_COLOR = webcolors.name_to_rgb('gray')
 SUPER_PACGUM_COLOR = webcolors.name_to_rgb('gold')
+PACMAN_COLOR = webcolors.name_to_rgb('yellow')
 
 
 class MazeRenderer:
@@ -92,40 +95,128 @@ class PacgumRenderer:
                 pygame.draw.circle(screen, PACGUM_COLOR, (center_x, center_y), 3)
 
 
+class PlayerRenderer:
+    def __init__(self, player: Player, offset_x, offset_y):
+        self.player = player
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+    def draw_player(self, screen: pygame.surface) -> None:
+        center_x = (self.player.x * CELL_SIZE + CELL_SIZE // 2 + self.offset_x)
+        center_y = (self.player.y * CELL_SIZE + CELL_SIZE // 2 + self.offset_y)
+        pygame.draw.circle(screen, PACMAN_COLOR, (center_x, center_y), 15)
+
 class GameScreen:
-    def __init__(self, mazegen: MazeGen):
+    def __init__(self, engine: Engine):
         pygame.init()
         self.screen = pygame.display.set_mode((1920, 1080))
         pygame.display.set_caption("Pacman")
-        self.running =  True
+        self.running = True
+        self.font = pygame.font.Font(None, 36)
 
-        self.mazegen = mazegen
+        self.engine = engine
+        self.mazegen = self.engine.maze
 
-        self.maze_width = len(maze_gen.maze[0]) * CELL_SIZE
-        self.maze_height = len(maze_gen.maze) * CELL_SIZE
+        self.maze_width = len(self.mazegen.maze[0]) * CELL_SIZE
+        self.maze_height = len(self.mazegen.maze) * CELL_SIZE
 
         screen_width, screen_height = self.screen.get_size()
 
-        self.offset_x = (screen_width  - self.maze_width)  / 2
+        self.offset_x = (screen_width - self.maze_width) / 2
         self.offset_y = (screen_height - self.maze_height) / 2
 
-        self.maze_renderer = MazeRenderer(self.mazegen.maze, self.offset_x, self.offset_y)
-        self.pacgum_renderer = PacgumRenderer(self.mazegen.pacgums, self.offset_x, self.offset_y)
+        self.maze_renderer = MazeRenderer(
+            self.mazegen.maze,
+            self.offset_x,
+            self.offset_y
+        )
+
+        self.pacgum_renderer = PacgumRenderer(
+            self.mazegen.pacgums,
+            self.offset_x,
+            self.offset_y
+        )
+
+        self.player_renderer = PlayerRenderer(
+            self.engine.player,
+            self.offset_x,
+            self.offset_y
+        )
+
+    def update_renderers(self):
+        self.mazegen = self.engine.maze
+
+        self.maze_width = len(self.mazegen.maze[0]) * CELL_SIZE
+        self.maze_height = len(self.mazegen.maze) * CELL_SIZE
+
+        self.offset_x = (self.screen.get_width() - self.maze_width) / 2
+        self.offset_y = (self.screen.get_height() - self.maze_height) / 2
+
+        self.maze_renderer = MazeRenderer(
+            self.mazegen.maze,
+            self.offset_x,
+            self.offset_y
+        )
+
+        self.pacgum_renderer = PacgumRenderer(
+            self.mazegen.pacgums,
+            self.offset_x,
+            self.offset_y
+        )
+
     def run(self):
         while self.running:
             self.handle_events()
+            self.engine.update()
+            if self.engine.maze.pacgums_nb == 0:
+                if not self.engine.start_next_level():
+                    self.running = False
+                    continue
+
+                self.update_renderers()
             self.render()
         pygame.quit()
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+
+            if event.type == pygame.KEYDOWN:
+                x = self.engine.player.x
+                y = self.engine.player.y
+                if event.key == pygame.K_SPACE:
+                    self.engine.maze.pacgums_nb = 0
+                if event.key == pygame.K_UP and y > 0 and not (self.engine.maze.maze[y][x] & 1):
+                    self.engine.player.y -= 1
+
+                elif event.key == pygame.K_DOWN and y < len(self.engine.maze.maze) - 1 and not (self.engine.maze.maze[y][x] & 4):
+                    self.engine.player.y += 1
+
+                elif event.key == pygame.K_LEFT and x > 0 and not (self.engine.maze.maze[y][x] & 8):
+                    self.engine.player.x -= 1
+
+                elif event.key == pygame.K_RIGHT and x < len(self.engine.maze.maze[y]) - 1 and not (self.engine.maze.maze[y][x] & 2):
+                    self.engine.player.x += 1
     def render(self):
+        self.screen.fill((0, 0, 0))
+
         self.maze_renderer.draw_maze(self.screen)
         self.pacgum_renderer.draw_pacgums(self.screen)
+        self.player_renderer.draw_player(self.screen)
+
+        self.draw_score()
+
         pygame.display.flip()
+    def draw_score(self):
+        score_text = self.font.render(
+            f"Score: {self.engine.score}",
+            True,
+            SCORE_COLOR
+        )
 
+        self.screen.blit(score_text, (20, 20))
 
-maze_gen = MazeGen((20,15))
-game = GameScreen(maze_gen)
+config = Parser.configSetter()
+engine = Engine(config)
+engine.start_next_level()
+game = GameScreen(engine)
 game.run()

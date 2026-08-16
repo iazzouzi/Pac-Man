@@ -25,7 +25,7 @@ class MazeGen(MazeGenerator):
                     self.pacgums.append(Pacgum(x, y, super=True))
                 elif y == self._height - 1 and x == self._width - 1:
                     self.pacgums.append(Pacgum(x, y, super=True))
-                elif y != self._height / 2 or x != self._width / 2:
+                else:
                     self.pacgums.append(Pacgum(x, y))
                 self.pacgums_nb += 1
 

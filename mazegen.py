@@ -26,7 +26,8 @@ class MazeGen(MazeGenerator):
                     self.pacgums.append(Pacgum(x, y, super=True))
                 elif y == self._height - 1 and x == self._width - 1:
                     self.pacgums.append(Pacgum(x, y, super=True))
-                elif y != self._height / 2 and x != self._width / 2:
+                #elif y != self._height / 2 and x != self._width / 2: # this condition does not append all the row and col : fhmti azbi ra makatkhalich gha blast dak sfar lbtana
+                else:
                     self.pacgums.append(Pacgum(x, y))
                 self.pacgums_nb += 1
 

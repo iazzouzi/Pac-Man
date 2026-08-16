@@ -15,7 +15,7 @@ def nmap(bin: str) -> set[str]:
 def reconstruct_path(map, dest):
     path = []
     curr = dest
-    while curr:
+    while curr is not None:
         path.append(curr)
         curr = map[curr]
     return path[::-1]
@@ -23,12 +23,13 @@ def reconstruct_path(map, dest):
 def next(maze: list[list[int]], root: tuple[int, int], dest: tuple[int, int]) -> tuple[int, int]:
     queue = Queue()
     queue.put(root)
-    visited = set(root)
+    visited = set()
+    visited.add(root)
     map = {root: None}
     while not queue.empty():
         curr = queue.get()
         if curr == dest:
-            return reconstruct_path(map, dest)[0]
+            return reconstruct_path(map, dest)[1]
         x = curr[0]
         y = curr[1]
         for port in nmap(f'{maze[y][x]:04b}'):
@@ -39,7 +40,7 @@ def next(maze: list[list[int]], root: tuple[int, int], dest: tuple[int, int]) ->
                     visited.add(nxt)
                     map[nxt] = curr
             elif port == 's':
-                nxt = (x, y - 1)
+                nxt = (x, y + 1)
                 if not nxt in visited:
                     queue.put(nxt)
                     visited.add(nxt)
@@ -51,7 +52,7 @@ def next(maze: list[list[int]], root: tuple[int, int], dest: tuple[int, int]) ->
                     visited.add(nxt)
                     map[nxt] = curr
             elif port == 'n':
-                nxt = (x, y + 1)
+                nxt = (x, y - 1)
                 if not nxt in visited:
                     queue.put(nxt)
                     visited.add(nxt)

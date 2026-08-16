@@ -162,6 +162,8 @@ class GameScreen:
             self.offset_x,
             self.offset_y
         )
+        self.player_renderer.offset_x = self.offset_x
+        self.player_renderer.offset_y = self.offset_y
 
     def run(self):
         while self.running:

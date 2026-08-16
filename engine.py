@@ -28,6 +28,8 @@ class Engine:
 
         self.score = 0
 
+        self.current_level = 0
+
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))
@@ -43,9 +45,17 @@ class Engine:
         for pacgum in self.maze.pacgums:
             if pacgum.x == x and pacgum.y == y:
                 pacgum.available = False
+                self.maze.pacgums_nb -= 1
 
         self.player.x = x
         self.player.y = y
+
+    def start_next_level(self):
+        if self.current_level >= len(self.levels):
+            return False
+        self.initialize_level(self.levels[self.current_level])
+        self.current_level += 1
+        return True
 
     def update(self):
         for ghost in self.maze.ghosts:

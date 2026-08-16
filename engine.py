@@ -24,64 +24,83 @@ class Engine:
 
         self.player = Player(0, 0, lives=self.lives)
 
+        self.maze = None
+
+        self.score = 0
+
+    def initialize_level(self, level):
+        try:
+            self.maze = MazeGen((level[0], level[1]))
+        except Exception as e:
+            raise SystemExit(e)
+
+        x = level[0] // 2
+        y = level[1] // 2
+
+        while self.maze.maze[y][x] == 15:
+            x -= 1
+
+        for pacgum in self.maze.pacgums:
+            if pacgum.x == x and pacgum.y == y:
+                pacgum.available = False
+
+        self.player.x = x
+        self.player.y = y
+
+    def update(self):
+        for ghost in self.maze.ghosts:
+            if not ghost.available:
+                if time.time() - ghost.available_ts > 10:
+                    ghost.available = True
+
+            if ghost.edible:
+                if time.time() - ghost.edible_ts > 10:
+                    ghost.edible = False
+
+            if ghost.available and self.player.x == ghost.x and self.player.y == ghost.y:
+                if ghost.edible:
+                    self.score += self.points_per_ghost
+                    ghost.available = False
+                    ghost.available_ts = time.time()
+                else:
+                    self.player.lives -= 1
+            # if ghost.available:
+            #     nxt = next(maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
+            #     if nxt:
+            #         ghost.x = nxt[0]
+            #         ghost.y = nxt[1]
+        for pacgum in self.maze.pacgums:
+            if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
+                if pacgum.super:
+                    self.score += self.points_per_super_pacgum
+
+                    for ghost in self.maze.ghosts:
+                        ghost.edible = True
+                        ghost.edible_ts = time.time()
+                else:
+                    self.score += self.points_per_pacgum
+
+                pacgum.available = False
+                self.maze.pacgums_nb -= 1
+
+
     def gameLoop(self):
-        score = 0
+        self.score = 0
         break_loop = False
         for level in self.levels:
             if break_loop:
                 break
-            try:
-                maze = MazeGen((level[0], level[1]))
-            except Exception as e:
-                raise SystemExit(e)
-            x = level[0] // 2
-            y = level[1] // 2
-            while maze.maze[y][x] == 15:
-                x -= 1
-            for pacgum in maze.pacgums:
-                if pacgum.x == x and pacgum.y == y:
-                    pacgum.available = False
-            self.player.x = x
-            self.player.y = y
+            self.initialize_level(level)
             start = time.time()
-            while maze.pacgums_nb:
+            while self.maze.pacgums_nb:
                 if time.time() - start > self.level_max_time:
                     break_loop = True
                     break
                 if not self.player.lives:
                     break_loop = True
                     break
-                for ghost in maze.ghosts:
-                    if not ghost.available:
-                        if time.time() - ghost.available_ts > 10:
-                            ghost.available = True
-                    if ghost.edible:
-                        if time.time() - ghost.edible_ts > 10:
-                            ghost.edible = False
-                    if ghost.available and self.player.x == ghost.x and self.player.y == ghost.y:
-                        if ghost.edible:
-                            score += self.points_per_ghost
-                            ghost.available = False
-                            ghost.available_ts = time.time()
-                        else:
-                            self.player.lives -= 1
-                    # if ghost.available:
-                    #     nxt = next(maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
-                    #     if nxt:
-                    #         ghost.x = nxt[0]
-                    #         ghost.y = nxt[1]
-                for pacgum in maze.pacgums:
-                    if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
-                        if pacgum.super:
-                            score += self.points_per_super_pacgum
-                            for ghost in maze.ghosts:
-                                ghost.edible = True
-                                ghost.edible.ts = time.time()
-                        else:
-                            score += self.points_per_pacgum
-                        pacgum.available = False
-                        maze.pacgums_nb -= 1
-        self.highscores_caching("Test", score)
+                self.update()
+        self.highscores_caching("Test", self.score)
 
     def highscores_caching(self, name: str, score: int):
         data: list[dict[str, Any]] = []

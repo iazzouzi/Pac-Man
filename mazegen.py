@@ -1,6 +1,5 @@
 from mazegenerator import MazeGenerator
-from models import Pacgum
-from models import Ghost
+from models import Pacgum, Ghost
 
 class MazeGen(MazeGenerator):
     def __init__(self, size = (15, 15), perfect = False, entry_cell = (0, 0), exit_cell = (-1, -1), seed = 0):
@@ -26,8 +25,7 @@ class MazeGen(MazeGenerator):
                     self.pacgums.append(Pacgum(x, y, super=True))
                 elif y == self._height - 1 and x == self._width - 1:
                     self.pacgums.append(Pacgum(x, y, super=True))
-                #elif y != self._height / 2 and x != self._width / 2: # this condition does not append all the row and col : fhmti azbi ra makatkhalich gha blast dak sfar lbtana
-                else:
+                elif y != self._height / 2 or x != self._width / 2:
                     self.pacgums.append(Pacgum(x, y))
                 self.pacgums_nb += 1
 

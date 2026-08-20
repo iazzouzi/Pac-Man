@@ -112,17 +112,18 @@ class Engine:
                 self.update()
         self.highscores_caching("Test", self.score)
 
-    def highscores_caching(self, name: str, score: int):
+    #make it static method
+    @staticmethod
+    def highscores_caching(name: str, score: int, highscore_filename):
         data: list[dict[str, Any]] = []
         try:
-            with open(self.highscore_filename, "r") as file:
+            with open(highscore_filename, "r") as file:
                 data = json.load(file)
         except (OSError, json.JSONDecodeError, Exception):
             pass
         try:
-            with open(self.highscore_filename, "w") as file:
+            with open(highscore_filename, "w") as file:
                 data.append({"name": name, "score": score})
                 json.dump(data, file)
         except (OSError, Exception) as e:
             print(f"Error occurred while writing to highscore file: {e}")
-

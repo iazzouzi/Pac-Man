@@ -31,7 +31,7 @@ class MazeGen(MazeGenerator):
 
     def ghostsInit(self):
         self.ghosts = []
-        self.ghosts.append(Ghost(0, 0))
-        self.ghosts.append(Ghost(self._width - 1, 0))
-        self.ghosts.append(Ghost(0, self._height - 1))
-        self.ghosts.append(Ghost(self._width - 1, self._height - 1))
+        self.ghosts.append(Ghost(1, 0))
+        self.ghosts.append(Ghost(self._width - 2, 0))
+        self.ghosts.append(Ghost(1, self._height - 1))
+        self.ghosts.append(Ghost(self._width - 2, self._height - 1))

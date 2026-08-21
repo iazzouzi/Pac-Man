@@ -1,6 +1,7 @@
 import pygame
 from engine import Engine
 from game_over_state import GameOverState
+from main_menu_state import MainMenuState
 from playing_state import PlayingState
 
 class Game:
@@ -14,7 +15,7 @@ class Game:
         self.running = True
         self.engine = engine
 
-        self.current_state = PlayingState(engine, self.screen)
+        self.current_state = MainMenuState()
 
     def run(self):
         while self.running:
@@ -34,20 +35,19 @@ class Game:
             self.fps.tick(5) 
 
     def change_state(self, result):
+        if result == 'playing':
+            self.current_state = PlayingState(
+                self.engine,
+                self.screen
+            )
         if isinstance(result, tuple) and result[0] == 'gameover':
             self.current_state = GameOverState(
                 result[1],
                 self.engine.highscore_filename
             )
             return
-
-        if result == 'retry':
-            self.current_state = PlayingState(
-                self.engine,
-                self.screen
-            )
-            return
-
+        if result == 'main':
+            self.current_state = MainMenuState()
         if result == 'quit':
             self.running = False
             pygame.quit()

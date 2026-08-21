@@ -80,12 +80,13 @@ class Engine:
                     self.player.lives -= 1
                     self.player.x = self.base_x
                     self.player.y = self.base_y
-                    return 'tkal' # bayna lhaja lwahida li n9dar ndir bach n3arfo tkal w ndur interrupt
-            # if ghost.available:
-            #     nxt = next(maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
-            #     if nxt:
-            #         ghost.x = nxt[0]
-            #         ghost.y = nxt[1]
+                    return 'tkal'
+            if ghost.available and time.time() - ghost.last_move_ts > 0.3:
+                nxt = next(self.maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
+                if nxt:
+                    ghost.x = nxt[0]
+                    ghost.y = nxt[1]
+                    ghost.last_move_ts = time.time()
         for pacgum in self.maze.pacgums:
             if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
                 if pacgum.super:

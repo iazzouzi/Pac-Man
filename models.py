@@ -35,6 +35,7 @@ class Ghost:
                  available: bool = True, available_ts: float = 0.0):
         self.x = x
         self.y = y
+        self.last_move_ts = 0.0
         self.edible = edible
         self.edible_ts = edible_ts
         self.available = available

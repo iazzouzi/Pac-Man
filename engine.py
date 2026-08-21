@@ -30,25 +30,29 @@ class Engine:
 
         self.current_level = 0
 
+        self.base_x = 0
+
+        self.base_y = 0
+
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))
         except Exception as e:
             raise SystemExit(e)
 
-        x = level[0] // 2
-        y = level[1] // 2
+        self.base_x = level[0] // 2
+        self.base_y = level[1] // 2
 
-        while self.maze.maze[y][x] == 15:
-            x -= 1
+        while self.maze.maze[self.base_y][self.base_x] == 15:
+            self.base_x -= 1
 
         for pacgum in self.maze.pacgums:
-            if pacgum.x == x and pacgum.y == y:
+            if pacgum.x == self.base_x and pacgum.y == self.base_y:
                 pacgum.available = False
                 self.maze.pacgums_nb -= 1
 
-        self.player.x = x
-        self.player.y = y
+        self.player.x = self.base_x
+        self.player.y = self.base_y
 
     def start_next_level(self):
         if self.current_level >= len(self.levels):
@@ -60,11 +64,11 @@ class Engine:
     def update(self):
         for ghost in self.maze.ghosts:
             if not ghost.available:
-                if time.time() - ghost.available_ts > 10:
+                if time.time() - ghost.available_ts > 10.0:
                     ghost.available = True
 
             if ghost.edible:
-                if time.time() - ghost.edible_ts > 10:
+                if time.time() - ghost.edible_ts > 10.0:
                     ghost.edible = False
 
             if ghost.available and self.player.x == ghost.x and self.player.y == ghost.y:
@@ -74,6 +78,8 @@ class Engine:
                     ghost.available_ts = time.time()
                 else:
                     self.player.lives -= 1
+                    self.player.x = self.base_x
+                    self.player.y = self.base_y
             # if ghost.available:
             #     nxt = next(maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
             #     if nxt:
@@ -93,26 +99,6 @@ class Engine:
                 pacgum.available = False
                 self.maze.pacgums_nb -= 1
 
-
-    def gameLoop(self):
-        self.score = 0
-        break_loop = False
-        for level in self.levels:
-            if break_loop:
-                break
-            self.initialize_level(level)
-            start = time.time()
-            while self.maze.pacgums_nb:
-                if time.time() - start > self.level_max_time:
-                    break_loop = True
-                    break
-                if not self.player.lives:
-                    break_loop = True
-                    break
-                self.update()
-        self.highscores_caching("Test", self.score)
-
-    #make it static method
     @staticmethod
     def highscores_caching(name: str, score: int, highscore_filename):
         data: list[dict[str, Any]] = []

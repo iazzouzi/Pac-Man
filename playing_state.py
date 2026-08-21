@@ -13,6 +13,7 @@ PACGUM_COLOR = name_to_rgb('gray')
 SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
 GHOST_COLOR = name_to_rgb('purple')
+GHOST_EDIBLE_COLOR = name_to_rgb('blue')
 
 
 class MazeRenderer:
@@ -119,7 +120,12 @@ class GhostRenderer:
             if ghost.available:
                 center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
                 center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
-                pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 3)
+                if ghost.edible:
+                    pygame.draw.circle(screen, GHOST_EDIBLE_COLOR, (center_x, center_y), 9)
+                else:
+                    pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
+                #hna rdit l ghosts ykono 9 pixels f radius w ila kan edible ykono blue w ila ma kanch edible ykono purple bach ndebugi
+                #wrani rdit l ghosts kaytspawnaw 7da lpacgums machi wsthom
 
 class PlayingState(GameState):
     def __init__(self, engine: Engine, screen):
@@ -218,14 +224,16 @@ class PlayingState(GameState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.engine.maze.pacgums_nb = 0
-                if event.key in [pygame.K_UP, pygame.K_w]:
+                if event.key in {pygame.K_UP, pygame.K_w}:
                     self.next_direction = "up"
-                elif event.key in [pygame.K_DOWN, pygame.K_s]:
+                elif event.key in {pygame.K_DOWN, pygame.K_s}:
                     self.next_direction = "down"
-                elif event.key in [pygame.K_LEFT, pygame.K_a]:
+                elif event.key in {pygame.K_LEFT, pygame.K_a}:
                     self.next_direction = "left"
-                elif event.key in [pygame.K_RIGHT, pygame.K_d]:
+                elif event.key in {pygame.K_RIGHT, pygame.K_d}:
                     self.next_direction = "right"
+
+                #hna walo ra rchkli nrdhom f sete
 
     def render(self, screen:pygame.surface):
         screen.fill((0, 0, 0))

@@ -125,6 +125,7 @@ class GhostRenderer:
                 else:
                     pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
 
+
 class PlayingState(GameState):
     def __init__(self, engine: Engine, screen: pygame.surface):
         self.font = pygame.font.Font(None, 36)
@@ -210,6 +211,7 @@ class PlayingState(GameState):
                 self.direction = None
 
             if self.engine.maze.pacgums_nb == 0:
+                self.direction = None
                 if not self.engine.start_next_level():
                     return ('win', self.engine.score)
 
@@ -223,6 +225,7 @@ class PlayingState(GameState):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    self.direction = None
                     self.engine.maze.pacgums_nb = 0
                 if event.key in {pygame.K_UP, pygame.K_w}:
                     self.next_direction = "up"

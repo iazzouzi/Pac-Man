@@ -1,3 +1,6 @@
+from os import environ
+environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
+
 import pygame
 from engine import Engine
 from game_over_state import GameOverState
@@ -15,7 +18,7 @@ class Game:
         self.running = True
         self.engine = engine
 
-        self.current_state = MainMenuState()
+        self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
 
     def run(self):
         while self.running:
@@ -32,7 +35,7 @@ class Game:
 
             self.current_state.render(self.screen)
             pygame.display.flip()
-            self.fps.tick(5) 
+            self.fps.tick(5.5) 
 
     def change_state(self, result):
         if result == 'playing':
@@ -47,7 +50,7 @@ class Game:
             )
             return
         if result == 'main':
-            self.current_state = MainMenuState()
+            self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
         if result == 'quit':
             self.running = False
             pygame.quit()

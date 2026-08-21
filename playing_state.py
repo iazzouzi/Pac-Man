@@ -124,11 +124,9 @@ class GhostRenderer:
                     pygame.draw.circle(screen, GHOST_EDIBLE_COLOR, (center_x, center_y), 9)
                 else:
                     pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
-                #hna rdit l ghosts ykono 9 pixels f radius w ila kan edible ykono blue w ila ma kanch edible ykono purple bach ndebugi
-                #wrani rdit l ghosts kaytspawnaw 7da lpacgums machi wsthom
 
 class PlayingState(GameState):
-    def __init__(self, engine: Engine, screen):
+    def __init__(self, engine: Engine, screen: pygame.surface):
         self.font = pygame.font.Font(None, 36)
         self.level_start = time.time()
 
@@ -207,7 +205,9 @@ class PlayingState(GameState):
                 return ('gameover', self.engine.score)
 
             self.move_player()
-            self.engine.update()
+            result = self.engine.update()
+            if result == 'tkal':
+                self.direction = None
 
             if self.engine.maze.pacgums_nb == 0:
                 if not self.engine.start_next_level():
@@ -233,8 +233,6 @@ class PlayingState(GameState):
                 elif event.key in {pygame.K_RIGHT, pygame.K_d}:
                     self.next_direction = "right"
 
-                #hna walo ra rchkli nrdhom f sete
-
     def render(self, screen:pygame.surface):
         screen.fill((0, 0, 0))
 
@@ -245,6 +243,7 @@ class PlayingState(GameState):
 
         self.draw_score(screen)
         self.draw_time(screen)
+        self.draw_lives(screen)
 
     def move_player(self):
         x = self.engine.player.x
@@ -264,6 +263,7 @@ class PlayingState(GameState):
                 self.engine.player.x -= 1
             elif self.direction == "right":
                 self.engine.player.x += 1
+
     def can_move(self, x, y, direction, maze):
         if direction == "up":
             return y > 0 and not (maze[y][x] & 1)
@@ -298,3 +298,10 @@ class PlayingState(GameState):
 
         screen.blit(time_text, (20, 50))
 
+    def draw_lives(self, screen: pygame.surface):
+        lives_text = self.font.render(
+            f"Lives: {self.engine.player.lives}/{self.engine.lives}",
+            True,
+            SCORE_COLOR
+        )
+        screen.blit(lives_text, (300, 20))

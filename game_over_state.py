@@ -22,16 +22,13 @@ class GameOverState(GameState):
         self.retry_button = pygame.Rect(170, 170, 200, 40)
         self.color = COLOR_INACTIVE
         self.active =  False
-        self.retry = False
 
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.QUIT :
                 return 'quit'
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.retry_button.collidepoint(event.pos) and self.retry:
-                    return 'retry'
-                elif self.input_rect.collidepoint(event.pos):
+                if self.input_rect.collidepoint(event.pos):
                     self.active = True
                 else:
                     self.active = False
@@ -42,7 +39,6 @@ class GameOverState(GameState):
                     self.user_txt = self.user_txt[:-1]
                 elif event.key == pygame.K_RETURN:
                     Engine.highscores_caching(self.user_txt, self.score, self.highscore_filename)
-                    self.retry = True
                 else:
                     self.user_txt += event.unicode
 
@@ -59,11 +55,3 @@ class GameOverState(GameState):
         screen.blit(self.text_surface, (self.input_rect.x + 5, self.input_rect.y + 7))
 
         pygame.draw.rect(screen, self.color, self.input_rect, 2)
-        if self.retry:
-            self.draw_retry(screen)
-
-
-    def draw_retry(self, screen):
-        pygame.draw.rect(screen, COLOR_ACTIVE, self.retry_button)
-        retry_text = self.font_input.render('retry', True, COLOR_TEXT)
-        screen.blit(retry_text, (self.retry_button.x +5, self.retry_button.y + 7))

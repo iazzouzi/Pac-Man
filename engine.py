@@ -80,6 +80,7 @@ class Engine:
                     self.player.lives -= 1
                     self.player.x = self.base_x
                     self.player.y = self.base_y
+                    return 'tkal' # bayna lhaja lwahida li n9dar ndir bach n3arfo tkal w ndur interrupt
             # if ghost.available:
             #     nxt = next(maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
             #     if nxt:

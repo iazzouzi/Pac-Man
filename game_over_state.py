@@ -1,5 +1,3 @@
-from os import name
-
 import pygame
 from game_state import GameState
 from engine import Engine
@@ -19,7 +17,6 @@ class GameOverState(GameState):
         self.font_input = pygame.font.Font(None, 32)
         self.user_txt = ''
         self.input_rect = pygame.Rect(170, 170, 200, 40)
-        self.retry_button = pygame.Rect(170, 170, 200, 40)
         self.color = COLOR_INACTIVE
         self.active =  False
 
@@ -39,6 +36,7 @@ class GameOverState(GameState):
                     self.user_txt = self.user_txt[:-1]
                 elif event.key == pygame.K_RETURN:
                     Engine.highscores_caching(self.user_txt, self.score, self.highscore_filename)
+                    return 'main'
                 else:
                     self.user_txt += event.unicode
 

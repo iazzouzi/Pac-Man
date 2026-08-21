@@ -69,7 +69,7 @@ class Engine:
                 if time.time() - ghost.edible_ts > 10.0:
                     ghost.edible = False
 
-            if ghost.available and self.player.x == ghost.x and self.player.y == ghost.y:
+            if ghost.available and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
                 if ghost.edible:
                     self.score += self.points_per_ghost
                     ghost.x = ghost.base_x
@@ -84,12 +84,30 @@ class Engine:
                         gh.x = gh.base_x
                         gh.y = gh.base_y
                     return 'tkal'
-            if ghost.available and time.time() - ghost.last_move_ts > 0.3:
-                nxt = next(self.maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))
-                if nxt:
-                    ghost.x = nxt[0]
-                    ghost.y = nxt[1]
-                    ghost.last_move_ts = time.time()
+            if ghost.available and ghost.x % 1 == 0 and ghost.y % 1 == 0:
+                if ghost.edible:
+                    if self.player.x < self.maze._width // 2 and self.player.y < self.maze._height // 2:
+                        (x, y) = (self.maze._width - 1, self.maze._height - 1)
+                    elif self.player.x > self.maze._width // 2 and self.player.y > self.maze._height // 2:
+                        (x, y) = (0, 0)
+                    elif self.player.x < self.maze._width // 2 and self.player.y > self.maze._height // 2:
+                        (x, y) = (self.maze._width - 1, 0)
+                    else:
+                        (x, y) = (0, self.maze._height - 1)
+                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (x, y))
+                else:
+                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (self.player.x, self.player.y))
+            if ghost.available and ghost.target is not None:
+                if ghost.x < ghost.target[0]:
+                    ghost.x = round(ghost.x + 0.2, 1)
+                elif ghost.x > ghost.target[0]:
+                    ghost.x = round(ghost.x - 0.2, 1)
+
+                if ghost.y < ghost.target[1]:
+                    ghost.y = round(ghost.y + 0.2, 1)
+                elif ghost.y > ghost.target[1]:
+                    ghost.y = round(ghost.y - 0.2, 1)
+
         for pacgum in self.maze.pacgums:
             if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
                 if pacgum.super:

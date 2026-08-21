@@ -21,6 +21,8 @@ class Player:
     def __init__(self, x: int, y: int, lives: int):
         self.x = x
         self.y = y
+        self.base_x = x
+        self.base_y = y
         self.lives = lives
 
 class Pacgum:
@@ -35,6 +37,8 @@ class Ghost:
                  available: bool = True, available_ts: float = 0.0):
         self.x = x
         self.y = y
+        self.base_x = x
+        self.base_y = y
         self.last_move_ts = 0.0
         self.edible = edible
         self.edible_ts = edible_ts

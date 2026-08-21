@@ -30,29 +30,27 @@ class Engine:
 
         self.current_level = 0
 
-        self.base_x = 0
-
-        self.base_y = 0
-
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))
         except Exception as e:
             raise SystemExit(e)
 
-        self.base_x = level[0] // 2
-        self.base_y = level[1] // 2
+        x = level[0] // 2
+        y = level[1] // 2
 
-        while self.maze.maze[self.base_y][self.base_x] == 15:
-            self.base_x -= 1
+        while self.maze.maze[y][x] == 15:
+            x -= 1
 
         for pacgum in self.maze.pacgums:
-            if pacgum.x == self.base_x and pacgum.y == self.base_y:
+            if pacgum.x == x and pacgum.y == y:
                 pacgum.available = False
                 self.maze.pacgums_nb -= 1
 
-        self.player.x = self.base_x
-        self.player.y = self.base_y
+        self.player.x = x
+        self.player.y = y
+        self.player.base_x = x
+        self.player.base_y = y
 
     def start_next_level(self):
         if self.current_level >= len(self.levels):
@@ -74,12 +72,17 @@ class Engine:
             if ghost.available and self.player.x == ghost.x and self.player.y == ghost.y:
                 if ghost.edible:
                     self.score += self.points_per_ghost
+                    ghost.x = ghost.base_x
+                    ghost.y = ghost.base_y
                     ghost.available = False
                     ghost.available_ts = time.time()
                 else:
                     self.player.lives -= 1
-                    self.player.x = self.base_x
-                    self.player.y = self.base_y
+                    self.player.x = self.player.base_x
+                    self.player.y = self.player.base_y
+                    for gh in self.maze.ghosts:
+                        gh.x = gh.base_x
+                        gh.y = gh.base_y
                     return 'tkal'
             if ghost.available and time.time() - ghost.last_move_ts > 0.3:
                 nxt = next(self.maze.maze, (ghost.x, ghost.y), (self.player.x, self.player.y))

@@ -229,6 +229,8 @@ class PlayingState(GameState):
                     self.engine.maze.pacgums_nb = 0
                 if event.key == pygame.K_0:
                     self.engine.invincibility = not self.engine.invincibility
+                if event.key == pygame.K_1:
+                    self.engine.ghost_freeze = not self.engine.ghost_freeze
                 if event.key in {pygame.K_UP, pygame.K_w}:
                     self.next_direction = "up"
                 elif event.key in {pygame.K_DOWN, pygame.K_s}:

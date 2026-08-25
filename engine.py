@@ -32,6 +32,8 @@ class Engine:
 
         self.invincibility = False
 
+        self.ghost_freeze = False
+
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))
@@ -86,6 +88,8 @@ class Engine:
                         gh.x = gh.base_x
                         gh.y = gh.base_y
                     return 'tkal'
+            if self.ghost_freeze:
+                continue
             if ghost.available and ghost.x % 1 == 0 and ghost.y % 1 == 0:
                 if ghost.edible:
                     if self.player.x < self.maze._width // 2 and self.player.y < self.maze._height // 2:

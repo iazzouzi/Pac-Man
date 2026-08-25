@@ -139,6 +139,6 @@ class Engine:
         try:
             with open(highscore_filename, "w") as file:
                 data.append({"name": name, "score": score})
-                json.dump(data, file)
+                json.dump(sorted(data, key=lambda x: (x["score"], x["name"]), reverse=True), file)
         except (OSError, Exception) as e:
             print(f"Error occurred while writing to highscore file: {e}")

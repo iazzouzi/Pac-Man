@@ -13,7 +13,7 @@ class Game:
 
         self.screen = pygame.display.set_mode((1920, 1080))
         self.fps = pygame.time.Clock()
-        pygame.display.set_caption("Pacman")
+        pygame.display.set_caption("PAC-MAN")
 
         self.running = True
         self.engine = engine

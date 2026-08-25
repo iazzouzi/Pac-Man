@@ -63,7 +63,7 @@ class MainMenuState(GameState):
         self.draw_button(screen, self.rect_start, "Start Game")
 
     def draw_highscore(self, screen):
-        self.draw_button(screen, self.rect_high, "Highscore")
+        self.draw_button(screen, self.rect_high, "View Highscores")
 
     def draw_instructions(self, screen):
         self.draw_button(screen, self.rect_inst, "Instructions")

@@ -30,6 +30,8 @@ class Engine:
 
         self.current_level = 0
 
+        self.invincibility = False
+
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))
@@ -76,7 +78,7 @@ class Engine:
                     ghost.y = ghost.base_y
                     ghost.available = False
                     ghost.available_ts = time.time()
-                else:
+                elif not self.invincibility:
                     self.player.lives -= 1
                     self.player.x = self.player.base_x
                     self.player.y = self.player.base_y

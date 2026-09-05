@@ -16,11 +16,14 @@ class GameOverState(GameState):
         self.font = pygame.font.Font(None, 80)
         self.font_input = pygame.font.Font(None, 32)
         self.user_txt = ''
-        self.input_rect = pygame.Rect(170, 170, 200, 40)
+        self.input_rect = pygame.Rect(170, 180, 200, 40)
+        self.gameovertext = self.font.render("Game Over", True, GAME_OVER_TEXT)
+        self.score_text = self.font.render(f'You Get: {self.score}', True, SCORE_TEXT)
+        self.prompt = self.font_input.render("Enter your name:", True, SCORE_TEXT)
         self.color = COLOR_INACTIVE
         self.active =  False
 
-    def handle_events(self, events):
+    def handle_events(self, events:pygame.event):
         for event in events:
             if event.type == pygame.QUIT :
                 return 'quit'
@@ -38,12 +41,12 @@ class GameOverState(GameState):
                     Engine.highscores_caching(self.user_txt, self.score, self.highscore_filename)
                     return 'main'
                 else:
-                    self.user_txt += event.unicode
+                    if len(self.user_txt) < 10 and (event.unicode.isalnum() or event.unicode.isspace()):
+                        self.user_txt += event.unicode
 
-    def render(self, screen: pygame.surface):
+    def render(self, screen: pygame.Surface):
         screen.fill((30, 30, 30))
-        self.gameovertext = self.font.render("Game Over", True, GAME_OVER_TEXT)
-        self.score_text = self.font.render(f'You Get: {self.score}', True, SCORE_TEXT)
+        screen.blit(self.prompt, (170, 155))
         screen.blit(self.gameovertext, (20, 50))
         screen.blit(self.score_text, (20, 100))
 

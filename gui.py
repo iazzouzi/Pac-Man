@@ -1,11 +1,13 @@
 from os import environ
+
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
-import pygame
+import pygame, time
 from engine import Engine
 from game_over_state import GameOverState
 from main_menu_state import MainMenuState
 from playing_state import PlayingState
+from pause_state import PauseState
 
 class Game:
     def __init__(self, engine: Engine):
@@ -19,6 +21,7 @@ class Game:
         self.engine = engine
 
         self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
+        self.playing_state = None
 
     def run(self):
         while self.running:
@@ -39,19 +42,24 @@ class Game:
 
     def change_state(self, result):
         if result == 'playing':
-            self.current_state = PlayingState(
-                self.engine,
-                self.screen
-            )
-        if isinstance(result, tuple) and result[0] == 'gameover':
+            self.playing_state = PlayingState(self.engine, self.screen)
+            self.current_state = self.playing_state
+        elif result == 'pause':
+            self.playing_state.pause_start = time.time()
+            self.current_state = PauseState()
+
+        elif result == 'resume':
+            self.playing_state.total_paused += time.time() - self.playing_state.pause_start
+            self.current_state = self.playing_state
+        elif isinstance(result, tuple) and result[0] == 'gameover':
             self.current_state = GameOverState(
                 result[1],
                 self.engine.highscore_filename
             )
             return
-        if result == 'main':
+        elif result == 'main':
             self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
-        if result == 'quit':
+        elif result == 'quit':
             self.running = False
             pygame.quit()
             return

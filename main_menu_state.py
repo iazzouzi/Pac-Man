@@ -34,14 +34,13 @@ class MainMenuState(GameState):
                 elif self.rect_exit.collidepoint(event.pos):
                     return 'quit'
 
-    def render(self, screen):
+    def render(self, screen:pygame.Surface):
         screen.fill((30,30,30))
         self.draw_title(screen)
         self.draw_start(screen)
         self.draw_highscore(screen)
         self.draw_instructions(screen)
         self.draw_exit(screen)
-        pygame.display.flip()
 
     def draw_button(self, screen: pygame.Surface, rect: pygame.Rect, label: str):
         mouse = pygame.mouse.get_pos()
@@ -55,9 +54,10 @@ class MainMenuState(GameState):
         text = self.font.render(label, True, text_color)
         screen.blit(text, text.get_rect(center=rect.center))
     
-    def draw_title(self, screen: pygame.surface):
+    def draw_title(self, screen: pygame.Surface):
         text = self.font_title.render("PAC-MAN", True, OPTIONS_COLOR_BUTTON)
-        screen.blit(text, (790, 190))
+        text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
+        screen.blit(text, text_rect)
 
     def draw_start(self, screen):
         self.draw_button(screen, self.rect_start, "Start Game")

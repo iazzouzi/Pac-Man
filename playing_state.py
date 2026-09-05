@@ -41,7 +41,7 @@ class MazeRenderer:
 
     def draw_cell(
             self,
-            screen: pygame.surface,
+            screen: pygame.Surface,
             row: int,
             col: int,
             cell: dict[str, bool]
@@ -70,7 +70,7 @@ class MazeRenderer:
                             (x, y + CELL_SIZE),
                             3)
 
-    def draw_maze(self, screen: pygame.surface) -> None:
+    def draw_maze(self, screen: pygame.Surface) -> None:
         for row in range(len(self.maze_directions)):
             for col in range(len(self.maze_directions[row])):
                 self.draw_cell(screen, row, col, self.maze_directions[row][col] )
@@ -82,7 +82,7 @@ class PacgumRenderer:
         self.offset_y = offset_y
         self.pacgums = pacgums
 
-    def draw_pacgums(self, screen: pygame.surface) -> None:
+    def draw_pacgums(self, screen: pygame.Surface) -> None:
         for pacgum in self.pacgums:
             if not pacgum.available:
                 continue
@@ -101,7 +101,7 @@ class PlayerRenderer:
         self.offset_x = offset_x
         self.offset_y = offset_y
 
-    def draw_player(self, screen: pygame.surface) -> None:
+    def draw_player(self, screen: pygame.Surface) -> None:
         center_x = (self.player.x * CELL_SIZE + CELL_SIZE // 2 + self.offset_x)
         center_y = (self.player.y * CELL_SIZE + CELL_SIZE // 2 + self.offset_y)
         pygame.draw.circle(screen, PACMAN_COLOR, (center_x, center_y), 15)
@@ -113,7 +113,7 @@ class GhostRenderer:
         self.offset_y = offset_y
         self.ghosts = ghosts
 
-    def draw_ghosts(self, screen:pygame.surface):
+    def draw_ghosts(self, screen:pygame.Surface):
         for ghost in self.ghosts:
             if not ghost.available:
                 continue
@@ -127,9 +127,11 @@ class GhostRenderer:
 
 
 class PlayingState(GameState):
-    def __init__(self, engine: Engine, screen: pygame.surface):
+    def __init__(self, engine: Engine, screen: pygame.Surface):
         self.font = pygame.font.Font(None, 36)
         self.level_start = time.time()
+        self.total_paused = 0
+        self.pause_start = None
 
         self.direction = None
         self.next_direction = None
@@ -199,7 +201,8 @@ class PlayingState(GameState):
         self.player_renderer.offset_y = self.offset_y
 
     def update(self):
-            if time.time() - self.level_start > self.engine.level_max_time:
+            elapsed = time.time() - self.level_start - self.total_paused
+            if elapsed > self.engine.level_max_time:
                 return ('gameover', self.engine.score)
 
             if not self.engine.player.lives:
@@ -231,6 +234,8 @@ class PlayingState(GameState):
                     self.engine.invincibility = not self.engine.invincibility
                 if event.key == pygame.K_1:
                     self.engine.ghost_freeze = not self.engine.ghost_freeze
+                if event.key == pygame.K_ESCAPE:
+                    return 'pause'
                 if event.key in {pygame.K_UP, pygame.K_w}:
                     self.next_direction = "up"
                 elif event.key in {pygame.K_DOWN, pygame.K_s}:
@@ -240,7 +245,7 @@ class PlayingState(GameState):
                 elif event.key in {pygame.K_RIGHT, pygame.K_d}:
                     self.next_direction = "right"
 
-    def render(self, screen:pygame.surface):
+    def render(self, screen:pygame.Surface):
         screen.fill((0, 0, 0))
 
         self.maze_renderer.draw_maze(screen)
@@ -282,7 +287,7 @@ class PlayingState(GameState):
             return x < len(maze[y]) - 1 and not (maze[y][x] & 2)
         return False
 
-    def draw_score(self, screen: pygame.surface):
+    def draw_score(self, screen: pygame.Surface):
         score_text = self.font.render(
             f"Score: {self.engine.score}",
             True,
@@ -291,21 +296,13 @@ class PlayingState(GameState):
 
         screen.blit(score_text, (20, 20))
 
-    def draw_time(self, screen: pygame.surface):
-        remaining = max(
-            0,
-            self.engine.level_max_time - (time.time() - self.level_start)
-        )
-
-        time_text = self.font.render(
-            f"Time: {int(remaining)}",
-            True,
-            SCORE_COLOR
-        )
-
+    def draw_time(self, screen: pygame.Surface):
+        elapsed = time.time() - self.level_start - self.total_paused
+        remaining = max(0, self.engine.level_max_time - elapsed)
+        time_text = self.font.render(f"Time: {int(remaining)}", True, SCORE_COLOR)
         screen.blit(time_text, (20, 50))
 
-    def draw_lives(self, screen: pygame.surface):
+    def draw_lives(self, screen: pygame.Surface):
         lives_text = self.font.render(
             f"Lives: {self.engine.player.lives}/{self.engine.lives}",
             True,

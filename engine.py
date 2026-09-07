@@ -142,3 +142,13 @@ class Engine:
                 json.dump(sorted(data, key=lambda x: (x["score"], x["name"]), reverse=True), file)
         except (OSError, Exception) as e:
             print(f"Error occurred while writing to highscore file: {e}")
+
+    def top_scores(self) -> dict[str, int]:
+        loaded = {}
+        file = self.highscore_filename
+        with open(file, 'r') as f:
+            data = json.load(f)
+        for dict_ in data:
+            loaded[dict_['name']] = dict_['score']
+        return {key: loaded[key] for key in list(loaded)[:5]}
+

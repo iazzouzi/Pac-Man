@@ -4,10 +4,7 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame, time
 from engine import Engine
-from game_over_state import GameOverState
-from main_menu_state import MainMenuState
-from playing_state import PlayingState
-from pause_state import PauseState
+from states import GameOverState, MainMenuState, PlayingState, PauseState
 
 class Game:
     def __init__(self, engine: Engine):

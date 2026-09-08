@@ -1,6 +1,6 @@
 import pygame
 from webcolors import name_to_rgb, hex_to_rgb
-from game_state import GameState
+from .game_state import GameState
 
 
 class PauseState(GameState):

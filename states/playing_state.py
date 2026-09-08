@@ -3,7 +3,7 @@ import time
 
 from engine import Engine
 from models import Ghost, Pacgum, Player
-from game_state import GameState
+from .game_state import GameState
 from webcolors import name_to_rgb
 
 CELL_SIZE = 50

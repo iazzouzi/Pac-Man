@@ -1,5 +1,5 @@
 import pygame
-from game_state import GameState
+from .game_state import GameState
 from webcolors import name_to_rgb, hex_to_rgb
 
 OPTIONS_COLOR_TEXT = hex_to_rgb('#222222')

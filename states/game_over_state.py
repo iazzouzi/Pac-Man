@@ -1,5 +1,5 @@
 import pygame
-from game_state import GameState
+from .game_state import GameState
 from engine import Engine
 from webcolors import name_to_rgb
 

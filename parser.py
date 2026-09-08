@@ -29,7 +29,7 @@ class Parser:
           return config
 
      @staticmethod
-     def configSetter():
+     def configSetter() -> Config:
           if len(sys.argv) != 2:
                raise SystemExit("Error: Invalid number of arguments")
           file = sys.argv[1]
@@ -73,10 +73,10 @@ class Parser:
                lives = data["lives"]
                if not lives:
                     print("Error: Lives cannot be empty")
-               elif isinstance(lives, int) and 0 < lives <= 10:
+               elif isinstance(lives, int) and 0 < lives <= 3:
                     config.lives = lives
                else:
-                    print("Error: Lives must be a positive integer between 1 and 10")
+                    print("Error: Lives must be a positive integer between 1 and 3")
 
           if "points_per_pacgum" in data:
                points_per_pacgum = data["points_per_pacgum"]

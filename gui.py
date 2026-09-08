@@ -38,7 +38,7 @@ class Game:
 
             self.current_state.render(self.screen)
             pygame.display.flip()
-            self.fps.tick(5.5) 
+            self.fps.tick(20)
 
     def change_state(self, result):
         if result == 'playing':

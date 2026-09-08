@@ -32,7 +32,7 @@ class Engine:
 
         self.invincibility = False
 
-        self.ghost_freeze = False
+        self.ghosts_freeze = False
 
     def initialize_level(self, level):
         try:
@@ -65,33 +65,34 @@ class Engine:
 
     def update(self):
         for ghost in self.maze.ghosts:
-            if not ghost.available:
-                if time.time() - ghost.available_ts > 10.0:
-                    ghost.available = True
 
             if ghost.edible:
                 if time.time() - ghost.edible_ts > 10.0:
                     ghost.edible = False
 
-            if ghost.available and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
+            if self.ghosts_freeze:
+                continue
+
+            if not ghost.tkal and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
                 if ghost.edible:
                     self.score += self.points_per_ghost
-                    ghost.x = ghost.base_x
-                    ghost.y = ghost.base_y
-                    ghost.available = False
-                    ghost.available_ts = time.time()
+                    ghost.edible = False
+                    ghost.tkal = True
                 elif not self.invincibility:
                     self.player.lives -= 1
                     self.player.x = self.player.base_x
                     self.player.y = self.player.base_y
                     for gh in self.maze.ghosts:
+                        if gh.tkal:
+                            continue
                         gh.x = gh.base_x
                         gh.y = gh.base_y
                     return 'tkal'
-            if self.ghost_freeze:
-                continue
-            if ghost.available and ghost.x % 1 == 0 and ghost.y % 1 == 0:
-                if ghost.edible:
+
+            if ghost.x % 1 == 0 and ghost.y % 1 == 0:
+                if ghost.tkal:
+                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (ghost.base_x, ghost.base_y))
+                elif ghost.edible:
                     if self.player.x < self.maze._width // 2 and self.player.y < self.maze._height // 2:
                         (x, y) = (self.maze._width - 1, self.maze._height - 1)
                     elif self.player.x > self.maze._width // 2 and self.player.y > self.maze._height // 2:
@@ -103,16 +104,28 @@ class Engine:
                     ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (x, y))
                 else:
                     ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (self.player.x, self.player.y))
-            if ghost.available and ghost.target is not None:
-                if ghost.x < ghost.target[0]:
-                    ghost.x = round(ghost.x + 0.2, 1)
-                elif ghost.x > ghost.target[0]:
-                    ghost.x = round(ghost.x - 0.2, 1)
 
-                if ghost.y < ghost.target[1]:
-                    ghost.y = round(ghost.y + 0.2, 1)
-                elif ghost.y > ghost.target[1]:
-                    ghost.y = round(ghost.y - 0.2, 1)
+            if ghost.target is not None:
+                target_x, target_y = ghost.target
+                if ghost.tkal:
+                    speed = 1.0
+                    if ghost.x % 1 != 0 or ghost.y % 1 != 0:
+                        ghost.x = int(ghost.x)
+                        ghost.y = int(ghost.y)
+                else:
+                    speed = 0.1
+                if ghost.x < target_x:
+                    ghost.x = round(ghost.x + speed, 1)
+                elif ghost.x > target_x:
+                    ghost.x = round(ghost.x - speed, 1)
+                if ghost.y < target_y:
+                    ghost.y = round(ghost.y + speed, 1)
+                elif ghost.y > target_y:
+                    ghost.y = round(ghost.y - speed, 1)
+
+            if ghost.tkal:
+                if ghost.x == ghost.base_x and ghost.y == ghost.base_y:
+                    ghost.tkal = False
 
         for pacgum in self.maze.pacgums:
             if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
@@ -120,6 +133,8 @@ class Engine:
                     self.score += self.points_per_super_pacgum
 
                     for ghost in self.maze.ghosts:
+                        if ghost.tkal:
+                            continue
                         ghost.edible = True
                         ghost.edible_ts = time.time()
                 else:
@@ -143,7 +158,7 @@ class Engine:
         except (OSError, Exception) as e:
             print(f"Error occurred while writing to highscore file: {e}")
 
-    def top_scores(self) -> dict[str, int]:
+    def get_top_scores(self) -> dict[str, int]:
         loaded = {}
         file = self.highscore_filename
         with open(file, 'r') as f:

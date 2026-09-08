@@ -14,6 +14,8 @@ SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
 GHOST_COLOR = name_to_rgb('purple')
 GHOST_EDIBLE_COLOR = name_to_rgb('blue')
+GHOST_TKAL_COLOR = name_to_rgb('green')
+
 
 
 class MazeRenderer:
@@ -114,16 +116,16 @@ class GhostRenderer:
         self.ghosts = ghosts
 
     def draw_ghosts(self, screen:pygame.Surface):
+        #hna bdelt chwiya
         for ghost in self.ghosts:
-            if not ghost.available:
-                continue
-            if ghost.available:
-                center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
-                center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
-                if ghost.edible:
-                    pygame.draw.circle(screen, GHOST_EDIBLE_COLOR, (center_x, center_y), 9)
-                else:
-                    pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
+            center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
+            center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
+            if ghost.tkal:
+                pygame.draw.circle(screen, GHOST_TKAL_COLOR, (center_x, center_y), 6)
+            elif ghost.edible:
+                pygame.draw.circle(screen, GHOST_EDIBLE_COLOR, (center_x, center_y), 9)
+            else:
+                pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
 
 
 class PlayingState(GameState):
@@ -233,7 +235,7 @@ class PlayingState(GameState):
                 if event.key == pygame.K_0:
                     self.engine.invincibility = not self.engine.invincibility
                 if event.key == pygame.K_1:
-                    self.engine.ghost_freeze = not self.engine.ghost_freeze
+                    self.engine.ghosts_freeze = not self.engine.ghosts_freeze
                 if event.key == pygame.K_ESCAPE:
                     return 'pause'
                 if event.key in {pygame.K_UP, pygame.K_w}:

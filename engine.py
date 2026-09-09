@@ -2,7 +2,7 @@ import json
 import time
 from algo import next
 from typing import Any
-from models import Config, Player
+from models import Config, Player, Pacgum, Ghost
 from mazegen import MazeGen
 
 class Engine:
@@ -63,16 +63,63 @@ class Engine:
         self.current_level += 1
         return True
 
+    def identify_target(self, ghost: Ghost):
+        if ghost.tkal:
+            target = (ghost.base_x, ghost.base_y)
+
+        elif ghost.edible:
+            if self.player.x < self.maze._width // 2 and self.player.y < self.maze._height // 2:
+                target = (self.maze._width - 1, self.maze._height - 1)
+            elif self.player.x > self.maze._width // 2 and self.player.y > self.maze._height // 2:
+                target = (0, 0)
+            elif self.player.x < self.maze._width // 2 and self.player.y > self.maze._height // 2:
+                target = (self.maze._width - 1, 0)
+            else:
+                target = (0, self.maze._height - 1)
+
+        elif ghost.name == "Blinky":
+            target = (self.player.x, self.player.y)
+
+        elif ghost.name == "Pinky":
+            if self.player.direction == "up" and self.player.y - 2 >= 0 and self.player.x - 2 >= 0:
+                target = (self.player.x - 2, self.player.y - 2)
+            elif self.player.direction == "down" and self.player.y + 2 <= self.maze._height - 1:
+                target = (self.player.x, self.player.y + 2)
+            elif self.player.direction == "left" and self.player.x - 2 >= 0:
+                target = (self.player.x - 2 , self.player.y)
+            elif self.player.direction == "right" and self.player.x + 2 <= self.maze._width - 1:
+                target = (self.player.x + 2, self.player.y)
+            else:
+                target = (self.player.x, self.player.y)
+
+        ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), target)
+
+    def move_ghost(self, ghost: Ghost):
+        if ghost.target is not None:
+            target_x, target_y = ghost.target
+            if ghost.tkal:
+                speed = 1.0
+                if ghost.x % 1 != 0 or ghost.y % 1 != 0:
+                    ghost.x = int(ghost.x)
+                    ghost.y = int(ghost.y)
+            else:
+                speed = 0.1
+            if ghost.x < target_x:
+                ghost.x = round(ghost.x + speed, 1)
+            elif ghost.x > target_x:
+                ghost.x = round(ghost.x - speed, 1)
+            if ghost.y < target_y:
+                ghost.y = round(ghost.y + speed, 1)
+            elif ghost.y > target_y:
+                ghost.y = round(ghost.y - speed, 1)
+
     def update(self):
         for ghost in self.maze.ghosts:
-
             if ghost.edible:
                 if time.time() - ghost.edible_ts > 10.0:
                     ghost.edible = False
-
             if self.ghosts_freeze:
                 continue
-
             if not ghost.tkal and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
                 if ghost.edible:
                     self.score += self.points_per_ghost
@@ -88,41 +135,9 @@ class Engine:
                         gh.x = gh.base_x
                         gh.y = gh.base_y
                     return 'tkal'
-
             if ghost.x % 1 == 0 and ghost.y % 1 == 0:
-                if ghost.tkal:
-                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (ghost.base_x, ghost.base_y))
-                elif ghost.edible:
-                    if self.player.x < self.maze._width // 2 and self.player.y < self.maze._height // 2:
-                        (x, y) = (self.maze._width - 1, self.maze._height - 1)
-                    elif self.player.x > self.maze._width // 2 and self.player.y > self.maze._height // 2:
-                        (x, y) = (0, 0)
-                    elif self.player.x < self.maze._width // 2 and self.player.y > self.maze._height // 2:
-                        (x, y) = (self.maze._width - 1, 0)
-                    else:
-                        (x, y) = (0, self.maze._height - 1)
-                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (x, y))
-                else:
-                    ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), (self.player.x, self.player.y))
-
-            if ghost.target is not None:
-                target_x, target_y = ghost.target
-                if ghost.tkal:
-                    speed = 1.0
-                    if ghost.x % 1 != 0 or ghost.y % 1 != 0:
-                        ghost.x = int(ghost.x)
-                        ghost.y = int(ghost.y)
-                else:
-                    speed = 0.1
-                if ghost.x < target_x:
-                    ghost.x = round(ghost.x + speed, 1)
-                elif ghost.x > target_x:
-                    ghost.x = round(ghost.x - speed, 1)
-                if ghost.y < target_y:
-                    ghost.y = round(ghost.y + speed, 1)
-                elif ghost.y > target_y:
-                    ghost.y = round(ghost.y - speed, 1)
-
+                self.identify_target(ghost)
+            self.move_ghost(ghost)
             if ghost.tkal:
                 if ghost.x == ghost.base_x and ghost.y == ghost.base_y:
                     ghost.tkal = False

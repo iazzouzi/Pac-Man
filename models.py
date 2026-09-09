@@ -23,6 +23,7 @@ class Player:
         self.y = y
         self.base_x = x
         self.base_y = y
+        self.direction = None
         self.lives = lives
 
 class Pacgum:

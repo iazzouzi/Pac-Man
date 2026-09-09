@@ -12,9 +12,6 @@ WALL_COLOR = name_to_rgb('white')
 PACGUM_COLOR = name_to_rgb('gray')
 SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
-GHOST_COLOR = name_to_rgb('purple')
-GHOST_EDIBLE_COLOR = name_to_rgb('blue')
-GHOST_TKAL_COLOR = name_to_rgb('green')
 
 
 
@@ -116,16 +113,22 @@ class GhostRenderer:
         self.ghosts = ghosts
 
     def draw_ghosts(self, screen:pygame.Surface):
-        #hna bdelt chwiya
+#                                                                                   hna bdelt chwiya
         for ghost in self.ghosts:
             center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
             center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
             if ghost.tkal:
-                pygame.draw.circle(screen, GHOST_TKAL_COLOR, (center_x, center_y), 6)
+                pygame.draw.circle(screen, name_to_rgb('green'), (center_x, center_y), 6)
             elif ghost.edible:
-                pygame.draw.circle(screen, GHOST_EDIBLE_COLOR, (center_x, center_y), 9)
-            else:
-                pygame.draw.circle(screen, GHOST_COLOR, (center_x, center_y), 9)
+                pygame.draw.circle(screen, name_to_rgb('blue'), (center_x, center_y), 9)
+            elif ghost.name == "Blinky":
+                pygame.draw.circle(screen, name_to_rgb('red'), (center_x, center_y), 9)
+            elif ghost.name == "Pinky":
+                pygame.draw.circle(screen, name_to_rgb('pink'), (center_x, center_y), 9)
+            elif ghost.name == "Inky":
+                pygame.draw.circle(screen, name_to_rgb('cyan'), (center_x, center_y), 9)
+            elif ghost.name == "Clyde":
+                pygame.draw.circle(screen, name_to_rgb('orange'), (center_x, center_y), 9)
 
 
 class PlayingState(GameState):
@@ -227,7 +230,7 @@ class PlayingState(GameState):
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
-
+#                                                                                 wtahna bedlt chwiya
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.direction = None
@@ -240,12 +243,16 @@ class PlayingState(GameState):
                     return 'pause'
                 if event.key in {pygame.K_UP, pygame.K_w}:
                     self.next_direction = "up"
+                    self.engine.player.direction = "up"
                 elif event.key in {pygame.K_DOWN, pygame.K_s}:
                     self.next_direction = "down"
+                    self.engine.player.direction = "down"
                 elif event.key in {pygame.K_LEFT, pygame.K_a}:
                     self.next_direction = "left"
+                    self.engine.player.direction = "left"
                 elif event.key in {pygame.K_RIGHT, pygame.K_d}:
                     self.next_direction = "right"
+                    self.engine.player.direction = "right"
 
     def render(self, screen:pygame.Surface):
         screen.fill((0, 0, 0))
@@ -267,7 +274,6 @@ class PlayingState(GameState):
         if self.next_direction and self.can_move(x, y, self.next_direction, maze):
             self.direction = self.next_direction
             self.next_direction = None
-
         if self.direction and self.can_move(x, y, self.direction, maze):
             if self.direction == "up":
                 self.engine.player.y -= 1

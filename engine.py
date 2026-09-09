@@ -4,6 +4,7 @@ from algo import next
 from typing import Any
 from models import Config, Player, Pacgum, Ghost
 from mazegen import MazeGen
+import random
 
 class Engine:
     def __init__(self, config: Config):
@@ -89,6 +90,27 @@ class Engine:
                 target = (self.player.x - 2 , self.player.y)
             elif self.player.direction == "right" and self.player.x + 2 <= self.maze._width - 1:
                 target = (self.player.x + 2, self.player.y)
+            else:
+                target = (self.player.x, self.player.y)
+
+        elif ghost.name == "Inky":
+            for gh in self.maze.ghosts:
+                if gh.name == "Blinky":
+                    dx = self.player.x - int(gh.x)
+                    dy = self.player.y - int(gh.y)
+                    if 0 <= self.player.x + dx <= self.maze._width - 1:
+                        x = self.player.x + dx
+                    else:
+                        x = self.player.x
+                    if 0 <= self.player.y + dy <= self.maze._height - 1:
+                        y = self.player.y + dy
+                    else:
+                        y = self.player.y
+            target = (x, y)
+
+        elif ghost.name == "Clyde":
+            if self.player.y - 2 >= 0 and self.player.x - 2 >= 0:
+                target = (self.player.x - 2, self.player.y - 2)
             else:
                 target = (self.player.x, self.player.y)
 

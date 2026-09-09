@@ -19,6 +19,10 @@ class Game:
         self.engine = engine
         self.engine.pacgum_sound = pygame.mixer.Sound("resources/eating_pacgum.mp3")
         self.engine.fail_sound = pygame.mixer.Sound("resources/fail.mp3")
+        self.engine.eating_ghost_sound = pygame.mixer.Sound("resources/eating_ghost.mp3")
+        self.engine.return_sound = pygame.mixer.Sound("resources/return.mp3")
+        self.engine.edible_ghosts_sound = pygame.mixer.Sound("resources/edible_ghosts.mp3")
+        self.engine.ghosts_move_sound = pygame.mixer.Sound("resources/ghosts_move.mp3")
 
         self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
         self.playing_state = None

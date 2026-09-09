@@ -4,7 +4,6 @@ from algo import next
 from typing import Any
 from models import Config, Player, Pacgum, Ghost
 from mazegen import MazeGen
-import pygame
 
 class Engine:
     def __init__(self, config: Config):
@@ -38,6 +37,16 @@ class Engine:
         self.pacgum_sound = None
 
         self.fail_sound = None
+
+        self.eating_ghost_sound = None
+
+        self.return_sound = None
+
+        self.edible_ghosts_sound = None
+
+        self.ghosts_move_sound = None
+
+        self.ghosts_move_sound_channel = None
 
     def initialize_level(self, level):
         try:
@@ -140,22 +149,25 @@ class Engine:
                 ghost.y = round(ghost.y - speed, 1)
 
     def update(self):
+        if not self.ghosts_move_sound_channel or not self.ghosts_move_sound_channel.get_busy():
+            self.ghosts_move_sound_channel = self.ghosts_move_sound.play()
         for ghost in self.maze.ghosts:
             if ghost.edible:
                 if time.time() - ghost.edible_ts > 10.0:
+                    self.edible_ghosts_sound.fadeout(1000)
                     ghost.edible = False
             if self.ghosts_freeze:
                 continue
             if not ghost.tkal and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
                 if ghost.edible:
+                    self.eating_ghost_sound.play()
                     self.score += self.points_per_ghost
+                    self.return_sound.play()
                     ghost.edible = False
                     ghost.tkal = True
                 elif not self.invincibility:
                     self.fail_sound.play()
                     self.player.lives -= 1
-                    from time import sleep
-                    sleep(2.3)
                     self.player.x = self.player.base_x
                     self.player.y = self.player.base_y
                     for gh in self.maze.ghosts:
@@ -169,6 +181,7 @@ class Engine:
             self.move_ghost(ghost)
             if ghost.tkal:
                 if ghost.x == ghost.base_x and ghost.y == ghost.base_y:
+                    self.return_sound.fadeout(1000)
                     ghost.tkal = False
 
         for pacgum in self.maze.pacgums:
@@ -176,6 +189,8 @@ class Engine:
                 self.pacgum_sound.play()
                 if pacgum.super:
                     self.score += self.points_per_super_pacgum
+                    self.ghosts_move_sound.stop()
+                    self.edible_ghosts_sound.play()
 
                     for ghost in self.maze.ghosts:
                         if ghost.tkal:

@@ -71,6 +71,7 @@ class Game:
             self.current_state = self.playing_state
 
         elif isinstance(result, tuple):
+            pygame.mixer.stop()
             self.current_state = GameResultState(
                 result[1],
                 self.engine.highscore_filename, result[0], self.screen.get_width(),

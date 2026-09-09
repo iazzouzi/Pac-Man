@@ -61,10 +61,12 @@ class Game:
             self.current_state = self.playing_state
 
         elif result == 'pause':
+            pygame.mixer.pause()
             self.playing_state.pause_start = time.time()
             self.current_state = PauseState(self.screen.get_width(), self.screen.get_height())
 
         elif result == 'resume':
+            pygame.mixer.unpause()
             self.playing_state.total_paused += time.time() - self.playing_state.pause_start
             self.current_state = self.playing_state
 

@@ -4,7 +4,7 @@ from algo import next
 from typing import Any
 from models import Config, Player, Pacgum, Ghost
 from mazegen import MazeGen
-import random
+import pygame
 
 class Engine:
     def __init__(self, config: Config):
@@ -34,6 +34,8 @@ class Engine:
         self.invincibility = False
 
         self.ghosts_freeze = False
+
+        self.dot_sound = None
 
     def initialize_level(self, level):
         try:
@@ -166,6 +168,7 @@ class Engine:
 
         for pacgum in self.maze.pacgums:
             if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
+                self.dot_sound.play()
                 if pacgum.super:
                     self.score += self.points_per_super_pacgum
 

@@ -9,6 +9,7 @@ from states import GameOverState, MainMenuState, PlayingState, PauseState
 class Game:
     def __init__(self, engine: Engine):
         pygame.init()
+        pygame.mixer.init()
 
         self.screen = pygame.display.set_mode((1920, 1080))
         self.fps = pygame.time.Clock()
@@ -16,6 +17,7 @@ class Game:
 
         self.running = True
         self.engine = engine
+        self.engine.dot_sound = pygame.mixer.Sound("resources/eating_pacgum.mp3")
 
         self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
         self.playing_state = None

@@ -4,7 +4,7 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame, time
 from engine import Engine
-from states import GameOverState, MainMenuState, PlayingState, PauseState
+from gui_src import GameResultState, MainMenuState, PlayingState, PauseState
 
 class Game:
     def __init__(self, engine: Engine):
@@ -44,21 +44,35 @@ class Game:
             pygame.display.flip()
             self.fps.tick(10)
 
+    def reset_engine(self):
+        self.engine.score = 0
+        self.engine.current_level = 0
+        self.engine.player.lives = self.engine.lives
+        self.engine.start_next_level()
+
     def change_state(self, result):
         if result == 'playing':
+            self.reset_engine()
             self.playing_state = PlayingState(self.engine, self.screen)
             self.current_state = self.playing_state
+        elif result == 'restart':
+            self.reset_engine()
+            self.playing_state = PlayingState(self.engine, self.screen)
+            self.current_state = self.playing_state
+
         elif result == 'pause':
             self.playing_state.pause_start = time.time()
-            self.current_state = PauseState()
+            self.current_state = PauseState(self.screen.get_width(), self.screen.get_height())
 
         elif result == 'resume':
             self.playing_state.total_paused += time.time() - self.playing_state.pause_start
             self.current_state = self.playing_state
-        elif isinstance(result, tuple) and result[0] == 'gameover':
-            self.current_state = GameOverState(
+
+        elif isinstance(result, tuple):
+            self.current_state = GameResultState(
                 result[1],
-                self.engine.highscore_filename
+                self.engine.highscore_filename, result[0], self.screen.get_width(),
+                self.screen.get_height()
             )
             return
         elif result == 'main':

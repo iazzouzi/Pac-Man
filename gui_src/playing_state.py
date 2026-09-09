@@ -221,7 +221,7 @@ class PlayingState(GameState):
             if self.engine.maze.pacgums_nb == 0:
                 self.direction = None
                 if not self.engine.start_next_level():
-                    return ('win', self.engine.score)
+                    return ('victory', self.engine.score)
 
                 self.update_renderers()
                 self.level_start = time.time()

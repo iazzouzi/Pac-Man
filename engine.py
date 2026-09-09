@@ -35,7 +35,9 @@ class Engine:
 
         self.ghosts_freeze = False
 
-        self.dot_sound = None
+        self.pacgum_sound = None
+
+        self.fail_sound = None
 
     def initialize_level(self, level):
         try:
@@ -150,7 +152,10 @@ class Engine:
                     ghost.edible = False
                     ghost.tkal = True
                 elif not self.invincibility:
+                    self.fail_sound.play()
                     self.player.lives -= 1
+                    from time import sleep
+                    sleep(2.3)
                     self.player.x = self.player.base_x
                     self.player.y = self.player.base_y
                     for gh in self.maze.ghosts:
@@ -168,7 +173,7 @@ class Engine:
 
         for pacgum in self.maze.pacgums:
             if pacgum.available and self.player.x == pacgum.x and self.player.y == pacgum.y:
-                self.dot_sound.play()
+                self.pacgum_sound.play()
                 if pacgum.super:
                     self.score += self.points_per_super_pacgum
 

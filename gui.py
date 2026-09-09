@@ -57,7 +57,7 @@ class Game:
 
         elif result == 'pause':
             self.playing_state.pause_start = time.time()
-            self.current_state = PauseState()
+            self.current_state = PauseState(self.screen.get_width(), self.screen.get_height())
 
         elif result == 'resume':
             self.playing_state.total_paused += time.time() - self.playing_state.pause_start

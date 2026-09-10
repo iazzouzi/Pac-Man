@@ -23,13 +23,15 @@ class GameResultState(GameState):
         self.result = result
         self.cx = screen_width // 2
         self.cy = screen_height // 2 - 150
-        self.font = pygame.font.Font("resources/PressStart2P-Regular.ttf", 36)
+        self.font_result = pygame.font.Font("resources/PressStart2P-Regular.ttf", 80)
+        self.font_score = pygame.font.Font("resources/PressStart2P-Regular.ttf", 45)
+        self.font_btn = pygame.font.Font("resources/PressStart2P-Regular.ttf", 19)
         self.font_input = pygame.font.Font("resources/PressStart2P-Regular.ttf", 14)
         self.user_txt = ''
-        self.input_rect = pygame.Rect(self.cx - 100, self.cy + 40, 200, 40)
-        self.gameovertext = self.font.render("Game Over", True, GAME_OVER_TEXT)
-        self.victorytext = self.font.render("Victory", True, VICTORY_TEXT)
-        self.score_text = self.font.render(f'You Get: {self.score}', True, SCORE_TEXT)
+        self.input_rect = pygame.Rect(self.cx - 100, self.cy + 120, 200, 40)
+        self.gameovertext = self.font_result.render("Game Over", True, GAME_OVER_TEXT)
+        self.victorytext = self.font_result.render("Victory", True, VICTORY_TEXT)
+        self.score_text = self.font_score.render(f'You Get: {self.score}', True, SCORE_TEXT)
         self.color = COLOR_INACTIVE
         self.active =  False
         self.name_submitted = False
@@ -37,7 +39,7 @@ class GameResultState(GameState):
         button_h = 75
         gap = 25
         bx = screen_width // 2 - button_w // 2
-        by = screen_height // 2 - 100
+        by = screen_height // 2
         self.rect_restart = pygame.Rect(bx, by, button_w, button_h)
         self.rect_menu    = pygame.Rect(bx, by + button_h + gap, button_w, button_h)
         self.rect_quit    = pygame.Rect(bx, by + (button_h + gap) * 2, button_w, button_h)
@@ -80,17 +82,17 @@ class GameResultState(GameState):
             screen.blit(self.gameovertext, (self.cx - self.gameovertext.get_width() // 2, self.cy - 120))
         elif self.result == 'victory':
             screen.blit(self.victorytext, (self.cx - self.victorytext.get_width() // 2, self.cy - 120))
-        screen.blit(self.score_text, (self.cx - self.score_text.get_width() // 2, self.cy - 60))
+        screen.blit(self.score_text, (self.cx - self.score_text.get_width() // 2, self.cy))
         if not self.name_submitted:
-            prompt = self.font_input.render("Enter your name (press Enter):", True, SCORE_TEXT)
-            screen.blit(prompt, (self.cx - prompt.get_width() // 2, self.cy))
+            prompt = self.font_input.render("Enter your name to save your score (press Enter):", True, SCORE_TEXT)
+            screen.blit(prompt, (self.cx - prompt.get_width() // 2, self.cy + 80))
             text_surface = self.font_input.render(self.user_txt, True, COLOR_TEXT)
             self.input_rect.w = max(200, text_surface.get_width() + 10)
             screen.blit(text_surface, (self.input_rect.x + 5, self.input_rect.y + 7))
             pygame.draw.rect(screen, self.color, self.input_rect, 2)
         else:
             saved = self.font_input.render(f"Score saved for {self.user_txt}! Try again and get a higher score!", True, SCORE_TEXT)
-            screen.blit(saved, (self.cx - saved.get_width() // 2, self.cy))
+            screen.blit(saved, (self.cx - saved.get_width() // 2, self.cy + 80))
             self.draw_button(screen, self.rect_restart, "Restart Game")
             self.draw_button(screen, self.rect_menu, "Menu")
             self.draw_button(screen, self.rect_quit, "Quit")
@@ -102,5 +104,5 @@ class GameResultState(GameState):
 
         pygame.draw.rect(screen, color, rect, border_radius=8)
         pygame.draw.rect(screen, OUTLINE_COLOR, rect, width=2, border_radius=8)
-        text = self.font_input.render(label, True, text_color)
+        text = self.font_btn.render(label, True, text_color)
         screen.blit(text, text.get_rect(center=rect.center))

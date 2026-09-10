@@ -193,28 +193,58 @@ class DeathAnimationRenderer:
 
 
 class GhostRenderer:
-    def __init__(self, ghosts: list[Ghost], offset_x:float, offset_y:float):
+    def __init__(self, ghosts: list[Ghost], offset_x: float, offset_y: float):
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.ghosts = ghosts
 
-    def draw_ghosts(self, screen:pygame.Surface):
-        for ghost in self.ghosts:
-            center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
-            center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
-            if ghost.tkal:
-                pygame.draw.circle(screen, name_to_rgb('green'), (center_x, center_y), 6)
-            elif ghost.edible:
-                pygame.draw.circle(screen, name_to_rgb('blue'), (center_x, center_y), 9)
-            elif ghost.name == "Blinky":
-                pygame.draw.circle(screen, name_to_rgb('red'), (center_x, center_y), 9)
-            elif ghost.name == "Pinky":
-                pygame.draw.circle(screen, name_to_rgb('pink'), (center_x, center_y), 9)
-            elif ghost.name == "Inky":
-                pygame.draw.circle(screen, name_to_rgb('cyan'), (center_x, center_y), 9)
-            elif ghost.name == "Clyde":
-                pygame.draw.circle(screen, name_to_rgb('orange'), (center_x, center_y), 9)
+        size = (CELL_SIZE - 17, CELL_SIZE - 17)
 
+        def load(path):
+            return pygame.transform.scale(
+                pygame.image.load(path).convert_alpha(), size
+            )
+
+        self.frame_sets = {
+            "Blinky": [load("assets/blinky_1.png"), load("assets/blinky_2.png")],
+            "Pinky":  [load("assets/pinky_1.png"),  load("assets/pinky_2.png")],
+            "Inky":   [load("assets/inky_1.png"),   load("assets/inky_2.png")],
+            "Clyde":  [load("assets/clyde_1.png"),  load("assets/clyde_2.png")],
+            "scared": [load("assets/scared_1.png"), load("assets/scared_2.png")],
+            "eyes_left":  [load("assets/eyes_2_left.png")],
+            "eyes_right": [load("assets/eyes_2_right.png")],
+        }
+
+        self.frame_index = {key: 0 for key in self.frame_sets}
+        self.last_frame_time = {key: pygame.time.get_ticks() for key in self.frame_sets}
+        self.frame_duration = 150
+
+    def _advance_frame(self, key: str) -> int:
+        now = pygame.time.get_ticks()
+        if now - self.last_frame_time[key] >= self.frame_duration:
+            self.frame_index[key] = (self.frame_index[key] + 1) % len(self.frame_sets[key])
+            self.last_frame_time[key] = now
+        return self.frame_index[key]
+
+    def draw_ghosts(self, screen: pygame.Surface):
+        for ghost in self.ghosts:
+            w_offset = (CELL_SIZE - self.frame_sets["Blinky"][0].get_width()) // 2
+            h_offset = (CELL_SIZE - self.frame_sets["Blinky"][0].get_height()) // 2
+            x = int(ghost.x * CELL_SIZE + self.offset_x + w_offset)
+            y = int(ghost.y * CELL_SIZE + self.offset_y + h_offset)
+
+            if ghost.tkal:
+                key = "eyes_left" if ghost.x > ghost.base_x else "eyes_right"
+                frame = self.frame_sets[key][0]
+            elif ghost.edible:
+                idx = self._advance_frame("scared")
+                frame = self.frame_sets["scared"][idx]
+            else:
+                key = ghost.name
+                idx = self._advance_frame(key)
+                frame = self.frame_sets[key][idx]
+
+            screen.blit(frame, (x, y))
 
 class HUD:
     def __init__(self, engine: Engine, state: 'PlayingState'):

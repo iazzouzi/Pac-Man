@@ -10,7 +10,7 @@ class Game:
     def __init__(self, engine: Engine):
         pygame.init()
         pygame.mixer.init()
-        self.__game_fps = 10
+        self.__game_fps = 25
 
         self.screen = pygame.display.set_mode((1920, 1080))
         self.fps = pygame.time.Clock()

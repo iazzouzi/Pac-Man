@@ -142,20 +142,17 @@ class Engine:
         if ghost.target is not None:
             target_x, target_y = ghost.target
             if ghost.tkal:
-                speed = 1.0
-                if ghost.x % 1 != 0 or ghost.y % 1 != 0:
-                    ghost.x = int(ghost.x)
-                    ghost.y = int(ghost.y)
+                speed = 0.2   # 6 cells/sec at 30 FPS — fast return, not Flash
             else:
-                speed = 0.1
+                speed = 0.05
             if ghost.x < target_x:
-                ghost.x = round(ghost.x + speed, 1)
+                ghost.x = round(ghost.x + speed, 2)
             elif ghost.x > target_x:
-                ghost.x = round(ghost.x - speed, 1)
+                ghost.x = round(ghost.x - speed, 2)
             if ghost.y < target_y:
-                ghost.y = round(ghost.y + speed, 1)
+                ghost.y = round(ghost.y + speed, 2)
             elif ghost.y > target_y:
-                ghost.y = round(ghost.y - speed, 1)
+                ghost.y = round(ghost.y - speed, 2)
 
     def update(self):
         if not self.ready:
@@ -185,6 +182,9 @@ class Engine:
                     self.return_sound.play()
                     ghost.edible = False
                     ghost.tkal = True
+                    # Snap to nearest cell once so move_ghost can use sub-integer speed safely
+                    ghost.x = round(ghost.x)
+                    ghost.y = round(ghost.y)
                 elif not self.invincibility:
                     self.ghosts_move_sound.stop()
                     self.fail_sound.play()

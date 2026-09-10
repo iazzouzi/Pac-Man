@@ -131,7 +131,7 @@ class GhostRenderer:
 
 
 class PlayingState(GameState):
-    def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 10):
+    def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 30):
         self.font = pygame.font.Font(None, 36)
         self.level_start = time.time()
         self.total_paused = 0
@@ -139,7 +139,7 @@ class PlayingState(GameState):
 
         self.direction = None
         self.next_direction = None
-        self.player_speed = round(2 / fps, 4)
+        self.player_speed = round(2 / fps, 1)
 
         self.engine = engine
         self.mazegen = self.engine.maze
@@ -206,25 +206,25 @@ class PlayingState(GameState):
         self.player_renderer.offset_y = self.offset_y
 
     def update(self):
-            elapsed = time.time() - self.level_start - self.total_paused
-            if elapsed > self.engine.level_max_time:
-                return ('gameover', self.engine.score)
+        elapsed = time.time() - self.level_start - self.total_paused
+        if elapsed > self.engine.level_max_time:
+            return ('gameover', self.engine.score)
 
-            if not self.engine.player.lives:
-                return ('gameover', self.engine.score)
+        if not self.engine.player.lives:
+            return ('gameover', self.engine.score)
 
-            self.move_player()
-            result = self.engine.update()
-            if result == 'tkal':
-                self.direction = None
+        self.move_player()
+        result = self.engine.update()
+        if result == 'tkal':
+            self.direction = None
 
-            if self.engine.maze.pacgums_nb == 0:
-                self.direction = None
-                if not self.engine.start_next_level():
-                    return ('victory', self.engine.score)
+        if self.engine.maze.pacgums_nb == 0:
+            self.direction = None
+            if not self.engine.start_next_level():
+                return ('victory', self.engine.score)
 
-                self.update_renderers()
-                self.level_start = time.time()
+            self.update_renderers()
+            self.level_start = time.time()
 
     def handle_events(self, events):
         for event in events:

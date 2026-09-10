@@ -3,3 +3,4 @@ from .game_result_state import GameResultState
 from .playing_state import PlayingState
 from .pause_state import PauseState
 from .highscore_state import HighscoreState
+from .instructions_state import InstructionsState

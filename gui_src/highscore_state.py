@@ -22,7 +22,7 @@ class HighscoreState(GameState):
             i: pygame.Rect(sx, sy + (score_h + gap) * i, score_w, score_h)
             for i in range(len(top_scores.items()))
         }
-        self.back_arrow = pygame.Rect(50, 50, 70, 70)
+        self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_scores = pygame.font.Font(None, 40)
         self.font_title = pygame.font.Font(None, 70)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
@@ -35,12 +35,12 @@ class HighscoreState(GameState):
                 if event.key == pygame.K_ESCAPE:
                     return 'main'
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.back_arrow.collidepoint(event.pos):
+                if self.arrow_rect.collidepoint(event.pos):
                     return 'main'
     def render(self, screen: pygame.Surface):
         screen.fill((30, 30, 30))
         title = self.font_title.render("Highscores", True, SCORE_BG_COLOR)
-        hovered = self.back_arrow.collidepoint(pygame.mouse.get_pos())
+        hovered = self.arrow_rect.collidepoint(pygame.mouse.get_pos())
         arrow_color = ARROW_HOVER_COLOR if hovered else ARROW_COLOR
         arrow = self.font_arrow.render("←", True, arrow_color)
         screen.blit(title, title.get_rect(midtop=(self.screen_width // 2, 75)))

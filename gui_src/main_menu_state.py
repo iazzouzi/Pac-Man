@@ -14,7 +14,7 @@ class MainMenuState(GameState):
         self.font = pygame.font.Font(None, 38)
         self.font_title = pygame.font.Font(None, 100)
 
-        button_w = 275
+        button_w = 370
         button_h = 75
         gap = 25
         x = screen_width // 2 - button_w // 2
@@ -33,6 +33,8 @@ class MainMenuState(GameState):
                     return 'playing'
                 elif self.rect_high.collidepoint(event.pos):
                     return 'highscores'
+                elif self.rect_inst.collidepoint(event.pos):
+                    return 'instructions'
                 elif self.rect_exit.collidepoint(event.pos):
                     return 'quit'
 

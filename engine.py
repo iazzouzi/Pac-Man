@@ -187,6 +187,7 @@ class Engine:
                     ghost.y = round(ghost.y)
                 elif not self.invincibility:
                     self.ghosts_move_sound.stop()
+                    self.edible_ghosts_sound.stop()
                     self.fail_sound.play()
                     self.player.lives -= 1
                     self.ready = 0
@@ -250,5 +251,5 @@ class Engine:
             data = json.load(f)
         for dict_ in data:
             loaded[dict_['name']] = dict_['score']
-        return {key: loaded[key] for key in list(loaded)[:5]}
+        return {key: loaded[key] for key in list(loaded)[:10]}
 

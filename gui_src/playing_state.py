@@ -256,7 +256,7 @@ class PlayingState(GameState):
                     self.engine.player.direction = "right"
 
     def render(self, screen:pygame.Surface):
-        screen.fill((0, 0, 0))
+        screen.fill((22, 22, 30))
 
         self.maze_renderer.draw_maze(screen)
         self.pacgum_renderer.draw_pacgums(screen)

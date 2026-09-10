@@ -1,5 +1,5 @@
-from .main_menu_state import MainMenuState
-from .game_result_state import GameResultState
+from .menu_state import MainMenuState
+from .result_state import GameResultState
 from .playing_state import PlayingState
 from .pause_state import PauseState
 from .highscore_state import HighscoreState

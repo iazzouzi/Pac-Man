@@ -13,6 +13,8 @@ PACGUM_COLOR = name_to_rgb('white')
 SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
 
+DEATH_FRAME_DURATION = 80
+DEATH_FRAME_COUNT = 16
 
 
 class MazeRenderer:
@@ -100,10 +102,94 @@ class PlayerRenderer:
         self.offset_x = offset_x
         self.offset_y = offset_y
 
+        size = (CELL_SIZE - 15, CELL_SIZE - 15)
+
+        def load(path):
+            return pygame.transform.scale(
+                pygame.image.load(path).convert_alpha(), size
+            )
+
+        base_frames = [
+            load("assets/pacman_0.png"),
+            load("assets/pacman_1.png"),
+            load("assets/pacman_2.png"),
+            load("assets/pacman_1.png"),
+        ]
+
+        def rotate(surface, angle):
+            rotated = pygame.transform.rotate(surface, angle)
+            return pygame.transform.scale(rotated, size)
+
+        self.frames = {
+            "right": base_frames,
+            "left":  [pygame.transform.flip(f, True, False) for f in base_frames],
+            "up":    [rotate(f, 90) for f in base_frames],
+            "down":  [rotate(f, -90) for f in base_frames],
+        }
+
+        self.frame_index = 0
+        self.last_frame_time = pygame.time.get_ticks()
+        self.frame_duration = 100
+
     def draw_player(self, screen: pygame.Surface) -> None:
-        center_x = (self.player.x * CELL_SIZE + CELL_SIZE // 2 + self.offset_x)
-        center_y = (self.player.y * CELL_SIZE + CELL_SIZE // 2 + self.offset_y)
-        pygame.draw.circle(screen, PACMAN_COLOR, (center_x, center_y), 15)
+        now = pygame.time.get_ticks()
+        if now - self.last_frame_time >= self.frame_duration:
+            self.frame_index = (self.frame_index + 1) % 4
+            self.last_frame_time = now
+
+        direction = self.player.direction or "right"
+        frame = self.frames[direction][self.frame_index]
+
+        w, h = frame.get_size()
+        x = int(self.player.x * CELL_SIZE + self.offset_x + (CELL_SIZE - w) / 2)
+        y = int(self.player.y * CELL_SIZE + self.offset_y + (CELL_SIZE - h) / 2)
+        self._last_draw_x = x
+        self._last_draw_y = y
+        screen.blit(frame, (x, y))
+
+
+class DeathAnimationRenderer:
+    """Plays the 16-frame Pac-Man death sprite animation without blocking."""
+
+    def __init__(self):
+        size = (CELL_SIZE - 15, CELL_SIZE - 15)
+
+        def load(i):
+            return pygame.transform.scale(
+                pygame.image.load(f"assets/pacman_death_{i}.png").convert_alpha(), size
+            )
+
+        self.frames = [load(i) for i in range(1, DEATH_FRAME_COUNT + 1)]
+        self.reset()
+
+    def reset(self):
+        self.active = False
+        self.frame_index = 0
+        self.last_frame_time = 0
+        self.draw_x = 0
+        self.draw_y = 0
+
+    def start(self, draw_x: int, draw_y: int):
+        """Begin playing the animation at the pixel position of the dead Pac-Man."""
+        self.active = True
+        self.frame_index = 0
+        self.last_frame_time = pygame.time.get_ticks()
+        self.draw_x = draw_x
+        self.draw_y = draw_y
+
+    def update_and_draw(self, screen: pygame.Surface) -> bool:
+        """Draw the current death frame. Returns True when animation is complete."""
+        if not self.active:
+            return False
+        now = pygame.time.get_ticks()
+        if now - self.last_frame_time >= DEATH_FRAME_DURATION:
+            self.frame_index += 1
+            self.last_frame_time = now
+        if self.frame_index >= DEATH_FRAME_COUNT:
+            self.active = False
+            return True
+        screen.blit(self.frames[self.frame_index], (self.draw_x, self.draw_y))
+        return False
 
 
 class GhostRenderer:
@@ -175,7 +261,6 @@ class HUD:
 
 class PlayingState(GameState):
     def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 30):
-        self.font = pygame.font.Font(None, 36)
         self.level_start = time.time()
         self.total_paused = 0
         self.pause_start = None
@@ -221,6 +306,11 @@ class PlayingState(GameState):
             self.offset_x,
             self.offset_y
         )
+        self.player_renderer._last_draw_x = 0
+        self.player_renderer._last_draw_y = 0
+
+        self.death_renderer = DeathAnimationRenderer()
+        self.dying = False
 
     def update_renderers(self):
         self.mazegen = self.engine.maze
@@ -251,6 +341,9 @@ class PlayingState(GameState):
         self.player_renderer.offset_y = self.offset_y
 
     def update(self):
+        if self.dying:
+            return
+
         elapsed = time.time() - self.level_start - self.total_paused
         if elapsed > self.engine.level_max_time:
             return ('gameover', self.engine.score)
@@ -260,8 +353,14 @@ class PlayingState(GameState):
 
         self.move_player()
         result = self.engine.update()
-        if result == 'tkal':
+        if result == 'death':
+            self.dying = True
             self.direction = None
+            self.next_direction = None
+            x = self.player_renderer._last_draw_x
+            y = self.player_renderer._last_draw_y
+            self.death_renderer.start(x, y)
+            return
 
         if self.engine.maze.pacgums_nb == 0:
             self.direction = None
@@ -275,6 +374,8 @@ class PlayingState(GameState):
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
+            if self.dying:
+                continue
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.direction = None
@@ -304,7 +405,15 @@ class PlayingState(GameState):
         self.maze_renderer.draw_maze(screen)
         self.pacgum_renderer.draw_pacgums(screen)
         self.ghost_renderer.draw_ghosts(screen)
-        self.player_renderer.draw_player(screen)
+
+        if self.dying:
+            finished = self.death_renderer.update_and_draw(screen)
+            if finished:
+                self.dying = False
+                self.engine.reset_after_death()
+                self.death_renderer.reset()
+        else:
+            self.player_renderer.draw_player(screen)
 
         self.hud.render(screen)
 

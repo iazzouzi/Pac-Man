@@ -191,15 +191,7 @@ class Engine:
                     self.player.lives -= 1
                     self.ready = 0
                     self.ready_sound_channel = None
-                    sleep(1.6)
-                    self.player.x = self.player.base_x
-                    self.player.y = self.player.base_y
-                    for gh in self.maze.ghosts:
-                        if gh.tkal:
-                            continue
-                        gh.x = gh.base_x
-                        gh.y = gh.base_y
-                    return 'tkal'
+                    return 'death'
             if ghost.x % 1 == 0 and ghost.y % 1 == 0:
                 self.identify_target(ghost)
             self.move_ghost(ghost)
@@ -226,6 +218,15 @@ class Engine:
 
                 pacgum.available = False
                 self.maze.pacgums_nb -= 1
+
+    def reset_after_death(self):
+        self.player.x = self.player.base_x
+        self.player.y = self.player.base_y
+        for gh in self.maze.ghosts:
+            if gh.tkal:
+                continue
+            gh.x = gh.base_x
+            gh.y = gh.base_y
 
     @staticmethod
     def highscores_caching(name: str, score: int, highscore_filename):

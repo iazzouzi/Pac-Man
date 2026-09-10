@@ -19,9 +19,9 @@ class InstructionsState(GameState):
         self.screen_height = screen_height
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
-        self.font_title = pygame.font.Font(None, 70)
-        self.font_section = pygame.font.Font(None, 34)
-        self.font_body = pygame.font.Font(None, 40)
+        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 32)
+        self.font_section = pygame.font.Font("resources/PressStart2P-Regular.ttf", 20)
+        self.font_body = pygame.font.Font("resources/PressStart2P-Regular.ttf", 17)
         self.bg = AnimatedBackground()
 
         p = engine.points_per_pacgum
@@ -100,11 +100,11 @@ class InstructionsState(GameState):
         for section_title, bullets in self.instructions:
             surf = self.font_section.render(section_title, True, SECTION_COLOR)
             screen.blit(surf, (x, y))
-            y += self.font_section.get_linesize() + 8
+            y += self.font_section.get_linesize() + 15
 
             for bullet in bullets:
                 surf = self.font_body.render(bullet, True, TEXT_COLOR)
                 screen.blit(surf, (x + 18, y))
-                y += self.font_body.get_linesize()
+                y += self.font_body.get_linesize() + 13
 
             y += 12

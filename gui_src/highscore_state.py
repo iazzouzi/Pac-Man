@@ -6,7 +6,7 @@ from webcolors import name_to_rgb, hex_to_rgb
 
 SCORE_BG_COLOR = name_to_rgb('gold')
 NAME_COLOR = hex_to_rgb('#222222')
-SCORE_COLOR = name_to_rgb('gray')
+SCORE_COLOR = hex_to_rgb('#222222')
 ARROW_COLOR = name_to_rgb('white')
 ARROW_HOVER_COLOR = name_to_rgb('yellow')
 
@@ -25,8 +25,8 @@ class HighscoreState(GameState):
             for i in range(len(top_scores.items()))
         }
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
-        self.font_scores = pygame.font.Font(None, 40)
-        self.font_title = pygame.font.Font(None, 70)
+        self.font_scores = pygame.font.Font("resources/PressStart2P-Regular.ttf", 18)
+        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 32)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
         self.bg = AnimatedBackground()
 

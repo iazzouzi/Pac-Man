@@ -12,7 +12,8 @@ OUTLINE_COLOR = name_to_rgb('gold')
 
 class PauseState(GameState):
     def __init__(self, screen_width, screen_height):
-        self.font_button = pygame.font.Font(None, 32)
+        self.font_button = pygame.font.Font("resources/PressStart2P-Regular.ttf", 19)
+        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 70)
         button_w = 370
         button_h = 75
         gap = 25
@@ -41,8 +42,7 @@ class PauseState(GameState):
         self.bg.update(1 / 60)
     def render(self, screen:pygame.Surface):
         self.bg.render(screen)
-        font = pygame.font.Font(None, 150)
-        text = font.render("PAUSED", True, name_to_rgb('gold'))
+        text = self.font_title.render("PAUSED", True, name_to_rgb('gold'))
         text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
         screen.blit(text, text_rect)
         self.draw_button(screen, self.rect_resume, "Resume")

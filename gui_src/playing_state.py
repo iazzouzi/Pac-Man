@@ -8,8 +8,8 @@ from webcolors import name_to_rgb
 
 CELL_SIZE = 50
 SCORE_COLOR = name_to_rgb('white')
-WALL_COLOR = name_to_rgb('white')
-PACGUM_COLOR = name_to_rgb('gray')
+WALL_COLOR = (0, 0, 255)
+PACGUM_COLOR = name_to_rgb('white')
 SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
 

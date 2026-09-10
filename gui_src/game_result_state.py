@@ -22,9 +22,9 @@ class GameResultState(GameState):
         self.highscore_filename = highscore_filename
         self.result = result
         self.cx = screen_width // 2
-        self.cy = screen_height // 2
-        self.font = pygame.font.Font(None, 80)
-        self.font_input = pygame.font.Font(None, 32)
+        self.cy = screen_height // 2 - 150
+        self.font = pygame.font.Font("resources/PressStart2P-Regular.ttf", 36)
+        self.font_input = pygame.font.Font("resources/PressStart2P-Regular.ttf", 14)
         self.user_txt = ''
         self.input_rect = pygame.Rect(self.cx - 100, self.cy + 40, 200, 40)
         self.gameovertext = self.font.render("Game Over", True, GAME_OVER_TEXT)
@@ -37,7 +37,7 @@ class GameResultState(GameState):
         button_h = 75
         gap = 25
         bx = screen_width // 2 - button_w // 2
-        by = screen_height // 2 + 60
+        by = screen_height // 2 - 100
         self.rect_restart = pygame.Rect(bx, by, button_w, button_h)
         self.rect_menu    = pygame.Rect(bx, by + button_h + gap, button_w, button_h)
         self.rect_quit    = pygame.Rect(bx, by + (button_h + gap) * 2, button_w, button_h)

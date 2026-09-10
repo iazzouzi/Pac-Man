@@ -12,8 +12,8 @@ OUTLINE_COLOR = name_to_rgb('gold')
 
 class MainMenuState(GameState):
     def __init__(self, screen_width: int, screen_height: int):
-        self.font = pygame.font.Font(None, 38)
-        self.font_title = pygame.font.Font(None, 100)
+        self.font = pygame.font.Font("resources/PressStart2P-Regular.ttf", 19)
+        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 70)
 
         self.bg = AnimatedBackground()
 

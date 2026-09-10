@@ -31,6 +31,8 @@ class MainMenuState(GameState):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect_start.collidepoint(event.pos):
                     return 'playing'
+                elif self.rect_high.collidepoint(event.pos):
+                    return 'highscores'
                 elif self.rect_exit.collidepoint(event.pos):
                     return 'quit'
 

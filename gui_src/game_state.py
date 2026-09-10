@@ -1,3 +1,5 @@
+import pygame
+
 class GameState:
     def handle_events(self, events):
         pass
@@ -5,5 +7,5 @@ class GameState:
     def update(self):
         pass
 
-    def render(self, screen):
+    def render(self, screen:pygame.Surface):
         pass

@@ -4,7 +4,7 @@ environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
 import pygame, time
 from engine import Engine
-from gui_src import GameResultState, MainMenuState, PlayingState, PauseState
+from gui_src import GameResultState, MainMenuState, PlayingState, PauseState, HighscoreState
 
 class Game:
     def __init__(self, engine: Engine):
@@ -72,6 +72,12 @@ class Game:
             return
         elif result == 'main':
             self.current_state = MainMenuState(self.screen.get_width(), self.screen.get_height())
+        elif result == 'highscores':
+            self.current_state = HighscoreState(
+                self.screen.get_width(),
+                self.screen.get_height(),
+                self.engine.get_top_scores()
+                )
         elif result == 'quit':
             self.running = False
             pygame.quit()

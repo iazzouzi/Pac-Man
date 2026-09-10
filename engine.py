@@ -48,6 +48,8 @@ class Engine:
 
         self.ghosts_move_sound_channel = None
 
+        self.ready_sound = None
+
     def initialize_level(self, level):
         try:
             self.maze = MazeGen((level[0], level[1]))

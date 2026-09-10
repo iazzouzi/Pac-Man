@@ -130,6 +130,49 @@ class GhostRenderer:
                 pygame.draw.circle(screen, name_to_rgb('orange'), (center_x, center_y), 9)
 
 
+class HUD:
+    def __init__(self, engine: Engine, state: 'PlayingState'):
+        self.engine = engine
+        self.state = state
+        self.font = pygame.font.Font(None, 36)
+
+    def draw_score(self, screen: pygame.Surface):
+        score_text = self.font.render(
+            f"Score: {self.engine.score}",
+            True,
+            SCORE_COLOR
+        )
+        screen.blit(score_text, (20, 20))
+
+    def draw_time(self, screen: pygame.Surface):
+        elapsed = time.time() - self.state.level_start - self.state.total_paused
+        remaining = max(0, self.engine.level_max_time - elapsed)
+        time_text = self.font.render(f"Time: {int(remaining)}", True, SCORE_COLOR)
+        screen.blit(time_text, (20, 50))
+
+    def draw_lives(self, screen: pygame.Surface):
+        lives_text = self.font.render(
+            f"Lives: {self.engine.player.lives}/{self.engine.lives}",
+            True,
+            SCORE_COLOR
+        )
+        screen.blit(lives_text, (300, 20))
+
+    def draw_level(self, screen: pygame.Surface):
+        level_text = self.font.render(
+            f"Level: {self.engine.current_level}/{len(self.engine.levels)}",
+            True,
+            SCORE_COLOR
+        )
+        screen.blit(level_text, (600, 20))
+
+    def render(self, screen: pygame.Surface):
+        self.draw_score(screen)
+        self.draw_time(screen)
+        self.draw_lives(screen)
+        self.draw_level(screen)
+
+
 class PlayingState(GameState):
     def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 30):
         self.font = pygame.font.Font(None, 36)
@@ -144,6 +187,8 @@ class PlayingState(GameState):
         self.engine = engine
         self.mazegen = self.engine.maze
         self.screen = screen
+
+        self.hud = HUD(self.engine, self)
 
         self.maze_width = len(self.mazegen.maze[0]) * CELL_SIZE
         self.maze_height = len(self.mazegen.maze) * CELL_SIZE
@@ -253,7 +298,7 @@ class PlayingState(GameState):
                     self.next_direction = "right"
                     self.engine.player.direction = "right"
 
-    def render(self, screen:pygame.Surface):
+    def render(self, screen: pygame.Surface):
         screen.fill((22, 22, 30))
 
         self.maze_renderer.draw_maze(screen)
@@ -261,9 +306,7 @@ class PlayingState(GameState):
         self.ghost_renderer.draw_ghosts(screen)
         self.player_renderer.draw_player(screen)
 
-        self.draw_score(screen)
-        self.draw_time(screen)
-        self.draw_lives(screen)
+        self.hud.render(screen)
 
     def move_player(self):
         x = self.engine.player.x
@@ -303,25 +346,3 @@ class PlayingState(GameState):
             return xi < len(maze[yi]) - 1 and not (maze[yi][xi] & 2)
         return False
 
-    def draw_score(self, screen: pygame.Surface):
-        score_text = self.font.render(
-            f"Score: {self.engine.score}",
-            True,
-            SCORE_COLOR
-        )
-
-        screen.blit(score_text, (20, 20))
-
-    def draw_time(self, screen: pygame.Surface):
-        elapsed = time.time() - self.level_start - self.total_paused
-        remaining = max(0, self.engine.level_max_time - elapsed)
-        time_text = self.font.render(f"Time: {int(remaining)}", True, SCORE_COLOR)
-        screen.blit(time_text, (20, 50))
-
-    def draw_lives(self, screen: pygame.Surface):
-        lives_text = self.font.render(
-            f"Lives: {self.engine.player.lives}/{self.engine.lives}",
-            True,
-            SCORE_COLOR
-        )
-        screen.blit(lives_text, (300, 20))

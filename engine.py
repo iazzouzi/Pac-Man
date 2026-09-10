@@ -4,6 +4,7 @@ from algo import next
 from typing import Any
 from models import Config, Player, Pacgum, Ghost
 from mazegen import MazeGen
+from time import sleep
 
 class Engine:
     def __init__(self, config: Config):
@@ -47,6 +48,14 @@ class Engine:
         self.ghosts_move_sound = None
 
         self.ghosts_move_sound_channel = None
+
+        self.ready_sound = None
+
+        self.ready_sound_channel = None
+
+        self.ready = 0
+
+        self.ready_ts = 0
 
     def initialize_level(self, level):
         try:
@@ -149,8 +158,17 @@ class Engine:
                 ghost.y = round(ghost.y - speed, 1)
 
     def update(self):
-        if not self.ghosts_move_sound_channel or not self.ghosts_move_sound_channel.get_busy():
-            self.ghosts_move_sound_channel = self.ghosts_move_sound.play()
+        if not self.ready:
+            if not self.ready_sound_channel or not self.ready_sound_channel.get_busy():
+                self.ready_sound_channel = self.ready_sound.play()
+                self.ready_ts = time.time()
+        if self.ready:
+            if not self.ghosts_move_sound_channel or not self.ghosts_move_sound_channel.get_busy():
+                self.ghosts_move_sound_channel = self.ghosts_move_sound.play()
+        if not self.ready and time.time() - self.ready_ts > 5.0:
+            self.ready = 1
+        if not self.ready:
+            return
         for ghost in self.maze.ghosts:
             if ghost.edible:
                 if time.time() - ghost.edible_ts > 10.0:
@@ -163,12 +181,17 @@ class Engine:
                 if ghost.edible:
                     self.eating_ghost_sound.play()
                     self.score += self.points_per_ghost
+                    sleep(1.6)
                     self.return_sound.play()
                     ghost.edible = False
                     ghost.tkal = True
                 elif not self.invincibility:
+                    self.ghosts_move_sound.stop()
                     self.fail_sound.play()
                     self.player.lives -= 1
+                    self.ready = 0
+                    self.ready_sound_channel = None
+                    sleep(1.6)
                     self.player.x = self.player.base_x
                     self.player.y = self.player.base_y
                     for gh in self.maze.ghosts:

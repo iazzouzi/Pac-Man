@@ -11,11 +11,11 @@ OUTLINE_COLOR = name_to_rgb('gold')
 class PauseState(GameState):
     def __init__(self, screen_width, screen_height):
         self.font_button = pygame.font.Font(None, 32)
-        button_w = 275
+        button_w = 370
         button_h = 75
         gap = 25
         bx = screen_width // 2 - button_w // 2
-        by = screen_height // 2 + 60
+        by = screen_height // 2 - 130
         self.rect_resume = pygame.Rect(bx, by, button_w, button_h)
         self.rect_restart    = pygame.Rect(bx, by + button_h + gap, button_w, button_h)
         self.rect_menu    = pygame.Rect(bx, by + (button_h + gap) * 2, button_w, button_h)
@@ -41,7 +41,7 @@ class PauseState(GameState):
         screen.blit(text, text_rect)
         self.draw_button(screen, self.rect_resume, "Resume")
         self.draw_button(screen, self.rect_restart, "Restart Game")
-        self.draw_button(screen, self.rect_menu, "Menu")
+        self.draw_button(screen, self.rect_menu, "Exit To Menu")
 
     def draw_button(self, screen: pygame.Surface, rect: pygame.Rect, label: str):
         hovered = rect.collidepoint(pygame.mouse.get_pos())

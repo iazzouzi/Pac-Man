@@ -158,7 +158,8 @@ class Engine:
                     ghost.edible = False
             if self.ghosts_freeze:
                 continue
-            if not ghost.tkal and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
+            # if not ghost.tkal and self.player.x == int(ghost.x) and self.player.y == int(ghost.y):
+            if not ghost.tkal and abs(self.player.x - ghost.x) < 0.5 and abs(self.player.y - ghost.y) < 0.5:  ##man3raf  claude li suggestaha lal9iti ma7sen fixiha
                 if ghost.edible:
                     self.eating_ghost_sound.play()
                     self.score += self.points_per_ghost

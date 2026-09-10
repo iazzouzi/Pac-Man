@@ -10,6 +10,7 @@ class Game:
     def __init__(self, engine: Engine):
         pygame.init()
         pygame.mixer.init()
+        self.__game_fps = 10
 
         self.screen = pygame.display.set_mode((1920, 1080))
         self.fps = pygame.time.Clock()
@@ -42,7 +43,7 @@ class Game:
 
             self.current_state.render(self.screen)
             pygame.display.flip()
-            self.fps.tick(10)
+            self.fps.tick(self.__game_fps)
 
     def reset_engine(self):
         self.engine.score = 0
@@ -53,11 +54,11 @@ class Game:
     def change_state(self, result):
         if result == 'playing':
             self.reset_engine()
-            self.playing_state = PlayingState(self.engine, self.screen)
+            self.playing_state = PlayingState(self.engine, self.screen, self.__game_fps)
             self.current_state = self.playing_state
         elif result == 'restart':
             self.reset_engine()
-            self.playing_state = PlayingState(self.engine, self.screen)
+            self.playing_state = PlayingState(self.engine, self.screen, self.__game_fps)
             self.current_state = self.playing_state
 
         elif result == 'pause':

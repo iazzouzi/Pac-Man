@@ -132,7 +132,7 @@ class GhostRenderer:
 
 
 class PlayingState(GameState):
-    def __init__(self, engine: Engine, screen: pygame.Surface):
+    def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 10):
         self.font = pygame.font.Font(None, 36)
         self.level_start = time.time()
         self.total_paused = 0
@@ -140,6 +140,7 @@ class PlayingState(GameState):
 
         self.direction = None
         self.next_direction = None
+        self.player_speed = round(2 / fps, 4)
 
         self.engine = engine
         self.mazegen = self.engine.maze
@@ -271,28 +272,35 @@ class PlayingState(GameState):
         y = self.engine.player.y
         maze = self.engine.maze.maze
 
+        if self.engine.player.x % 1 == 0 and self.engine.player.y % 1 == 0:
+            self.engine.player.x = int(self.engine.player.x)
+            self.engine.player.y = int(self.engine.player.y)
         if self.next_direction and self.can_move(x, y, self.next_direction, maze):
             self.direction = self.next_direction
             self.next_direction = None
+
         if self.direction and self.can_move(x, y, self.direction, maze):
             if self.direction == "up":
-                self.engine.player.y -= 1
+                self.engine.player.y = round(self.engine.player.y - self.player_speed, 4)
             elif self.direction == "down":
-                self.engine.player.y += 1
+                self.engine.player.y = round(self.engine.player.y + self.player_speed, 4)
             elif self.direction == "left":
-                self.engine.player.x -= 1
+                self.engine.player.x = round(self.engine.player.x - self.player_speed, 4)
             elif self.direction == "right":
-                self.engine.player.x += 1
+                self.engine.player.x = round(self.engine.player.x + self.player_speed, 4)
 
     def can_move(self, x, y, direction, maze):
+        if x % 1 != 0 or y % 1 != 0:
+            return direction == self.direction
+        xi, yi = int(x), int(y)
         if direction == "up":
-            return y > 0 and not (maze[y][x] & 1)
+            return yi > 0 and not (maze[yi][xi] & 1)
         if direction == "down":
-            return y < len(maze) - 1 and not (maze[y][x] & 4)
+            return yi < len(maze) - 1 and not (maze[yi][xi] & 4)
         if direction == "left":
-            return x > 0 and not (maze[y][x] & 8)
+            return xi > 0 and not (maze[yi][xi] & 8)
         if direction == "right":
-            return x < len(maze[y]) - 1 and not (maze[y][x] & 2)
+            return xi < len(maze[yi]) - 1 and not (maze[yi][xi] & 2)
         return False
 
     def draw_score(self, screen: pygame.Surface):

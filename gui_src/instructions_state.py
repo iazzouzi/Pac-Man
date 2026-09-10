@@ -1,6 +1,7 @@
 import pygame
 
 from engine import Engine
+from .background import AnimatedBackground
 from .game_state import GameState
 from webcolors import name_to_rgb
 
@@ -21,6 +22,7 @@ class InstructionsState(GameState):
         self.font_title = pygame.font.Font(None, 70)
         self.font_section = pygame.font.Font(None, 34)
         self.font_body = pygame.font.Font(None, 40)
+        self.bg = AnimatedBackground()
 
         p = engine.points_per_pacgum
         sp = engine.points_per_super_pacgum
@@ -77,9 +79,10 @@ class InstructionsState(GameState):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.arrow_rect.collidepoint(event.pos):
                     return 'main'
-
+    def update(self):
+        self.bg.update(1 / 60)
     def render(self, screen):
-        screen.fill((30, 30, 30))
+        self.bg.render(screen)
 
         title = self.font_title.render("Instructions", True, TITLE_COLOR)
         screen.blit(title, title.get_rect(midtop=(self.screen_width // 2, 75)))

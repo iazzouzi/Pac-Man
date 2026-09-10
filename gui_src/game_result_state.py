@@ -1,5 +1,6 @@
 import pygame
 from .game_state import GameState
+from .background import AnimatedBackground
 from engine import Engine
 from webcolors import name_to_rgb, hex_to_rgb
 
@@ -40,6 +41,7 @@ class GameResultState(GameState):
         self.rect_restart = pygame.Rect(bx, by, button_w, button_h)
         self.rect_menu    = pygame.Rect(bx, by + button_h + gap, button_w, button_h)
         self.rect_quit    = pygame.Rect(bx, by + (button_h + gap) * 2, button_w, button_h)
+        self.bg = AnimatedBackground()
 
     def handle_events(self, events:pygame.event):
         for event in events:
@@ -70,9 +72,10 @@ class GameResultState(GameState):
                 else:
                     if len(self.user_txt) < 10 and (event.unicode.isalnum() or event.unicode.isspace()):
                         self.user_txt += event.unicode
-
+    def update(self):
+        self.bg.update(1 / 60)
     def render(self, screen: pygame.Surface):
-        screen.fill((30, 30, 30))
+        self.bg.render(screen)
         if self.result == 'gameover':
             screen.blit(self.gameovertext, (self.cx - self.gameovertext.get_width() // 2, self.cy - 120))
         elif self.result == 'victory':

@@ -1,5 +1,7 @@
 import pygame
 from webcolors import name_to_rgb, hex_to_rgb
+
+from .background import AnimatedBackground
 from .game_state import GameState
 
 OPTIONS_COLOR_BUTTON = name_to_rgb('gold')
@@ -19,6 +21,8 @@ class PauseState(GameState):
         self.rect_resume = pygame.Rect(bx, by, button_w, button_h)
         self.rect_restart    = pygame.Rect(bx, by + button_h + gap, button_w, button_h)
         self.rect_menu    = pygame.Rect(bx, by + (button_h + gap) * 2, button_w, button_h)
+        self.bg = AnimatedBackground()
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.QUIT:
@@ -33,8 +37,10 @@ class PauseState(GameState):
                     return 'restart'
                 elif self.rect_menu.collidepoint(event.pos):
                     return 'main'
+    def update(self):
+        self.bg.update(1 / 60)
     def render(self, screen:pygame.Surface):
-        screen.fill((30, 30, 30))
+        self.bg.render(screen)
         font = pygame.font.Font(None, 150)
         text = font.render("PAUSED", True, name_to_rgb('gold'))
         text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))

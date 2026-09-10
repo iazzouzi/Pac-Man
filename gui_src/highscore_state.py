@@ -1,4 +1,6 @@
 import pygame
+
+from .background import AnimatedBackground
 from .game_state import GameState
 from webcolors import name_to_rgb, hex_to_rgb
 
@@ -26,6 +28,7 @@ class HighscoreState(GameState):
         self.font_scores = pygame.font.Font(None, 40)
         self.font_title = pygame.font.Font(None, 70)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
+        self.bg = AnimatedBackground()
 
     def handle_events(self, events):
         for event in events:
@@ -37,8 +40,10 @@ class HighscoreState(GameState):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.arrow_rect.collidepoint(event.pos):
                     return 'main'
+    def update(self):
+        self.bg.update(1 / 60)
     def render(self, screen: pygame.Surface):
-        screen.fill((30, 30, 30))
+        self.bg.render(screen)
         title = self.font_title.render("Highscores", True, SCORE_BG_COLOR)
         hovered = self.arrow_rect.collidepoint(pygame.mouse.get_pos())
         arrow_color = ARROW_HOVER_COLOR if hovered else ARROW_COLOR

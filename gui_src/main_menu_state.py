@@ -1,5 +1,6 @@
 import pygame
 from .game_state import GameState
+from .background import AnimatedBackground
 from webcolors import name_to_rgb, hex_to_rgb
 
 OPTIONS_COLOR_TEXT = hex_to_rgb('#222222')
@@ -13,6 +14,8 @@ class MainMenuState(GameState):
     def __init__(self, screen_width: int, screen_height: int):
         self.font = pygame.font.Font(None, 38)
         self.font_title = pygame.font.Font(None, 100)
+
+        self.bg = AnimatedBackground()
 
         button_w = 370
         button_h = 75
@@ -38,8 +41,11 @@ class MainMenuState(GameState):
                 elif self.rect_exit.collidepoint(event.pos):
                     return 'quit'
 
+    def update(self):
+        self.bg.update(1 / 60)
+
     def render(self, screen:pygame.Surface):
-        screen.fill((30,30,30))
+        self.bg.render(screen)
         self.draw_title(screen)
         self.draw_start(screen)
         self.draw_highscore(screen)

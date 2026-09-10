@@ -113,7 +113,6 @@ class GhostRenderer:
         self.ghosts = ghosts
 
     def draw_ghosts(self, screen:pygame.Surface):
-#                                                                                   hna bdelt chwiya
         for ghost in self.ghosts:
             center_x = (ghost.x * CELL_SIZE) + CELL_SIZE // 2 + self.offset_x
             center_y = (ghost.y * CELL_SIZE) + CELL_SIZE // 2 + self.offset_y
@@ -231,7 +230,6 @@ class PlayingState(GameState):
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
-#                                                                                 wtahna bedlt chwiya
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.direction = None
@@ -290,6 +288,8 @@ class PlayingState(GameState):
                 self.engine.player.x = round(self.engine.player.x + self.player_speed, 4)
 
     def can_move(self, x, y, direction, maze):
+        if not self.engine.ready:
+            return False
         if x % 1 != 0 or y % 1 != 0:
             return direction == self.direction
         xi, yi = int(x), int(y)

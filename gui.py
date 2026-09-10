@@ -92,8 +92,9 @@ class Game:
         elif result == 'instructions':
             self.current_state = InstructionsState(
                 self.screen.get_width(),
-                self.screen.get_height()
-                )
+                self.screen.get_height(),
+                self.engine
+            )
         elif result == 'quit':
             self.running = False
             pygame.quit()

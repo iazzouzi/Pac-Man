@@ -34,9 +34,9 @@ class Pacgum:
         self.super = super
 
 class Ghost:
-    def __init__(self, x: int | float, y: int | float, name: str, 
+    def __init__(self, x: int | float, y: int | float, name: str, direction: str = None,
                  tkal: bool = False, target: tuple[int, int] = None, 
-                 edible: bool = False, edible_ts: float = 0.0,):
+                 next: tuple[int, int] = None, edible: bool = False, edible_ts: float = 0.0):
         self.x = x
         self.y = y
         self.base_x = x
@@ -44,6 +44,7 @@ class Ghost:
         self.name = name
         self.tkal = tkal
         self.target = target
+        self.next = next
         self.edible = edible
         self.edible_ts = edible_ts
-        self.direction = None
+        self.direction = direction

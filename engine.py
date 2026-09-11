@@ -87,6 +87,18 @@ class Engine:
         return True
 
     def identify_target(self, ghost: Ghost):
+        if ghost.target is not None:
+            if ghost.target == (self.player.x, self.player.y):
+                if ghost.x == self.player.x and ghost.y == self.player.y:
+                    ghost.next = None
+                    return
+                ghost.next = next(self.maze.maze, (int(ghost.x), int(ghost.y)), ghost.target)
+                return
+            elif ghost.target == (ghost.x, ghost.y):
+                ghost.target = (self.player.x, self.player.y)
+                ghost.next = next(self.maze.maze, (int(ghost.x), int(ghost.y)), ghost.target)
+                return
+
         if ghost.tkal:
             target = (ghost.base_x, ghost.base_y)
 
@@ -133,26 +145,26 @@ class Engine:
                 target = (self.player.x - 2, self.player.y - 2)
             else:
                 target = (self.player.x, self.player.y)
-
-        ghost.target = next(self.maze.maze, (int(ghost.x), int(ghost.y)), target)
+        ghost.target = target
+        ghost.next = next(self.maze.maze, (int(ghost.x), int(ghost.y)), target)
 
     def move_ghost(self, ghost: Ghost):
-        if ghost.target is not None:
-            target_x, target_y = ghost.target
+        if ghost.next is not None:
+            next_x, next_y = ghost.next
             if ghost.tkal:
                 speed = 0.2   # 6 cells/sec at 30 FPS — fast return, not Flash
             else:
                 speed = 0.05
-            if ghost.x < target_x:
+            if ghost.x < next_x:
                 ghost.direction = "right"
                 ghost.x = round(ghost.x + speed, 2)
-            elif ghost.x > target_x:
+            elif ghost.x > next_x:
                 ghost.direction = "left"
                 ghost.x = round(ghost.x - speed, 2)
-            if ghost.y < target_y:
+            if ghost.y < next_y:
                 ghost.direction = "down"
                 ghost.y = round(ghost.y + speed, 2)
-            elif ghost.y > target_y:
+            elif ghost.y > next_y:
                 ghost.direction = "up"
                 ghost.y = round(ghost.y - speed, 2)
 

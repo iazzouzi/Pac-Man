@@ -46,3 +46,4 @@ class Ghost:
         self.target = target
         self.edible = edible
         self.edible_ts = edible_ts
+        self.direction = None

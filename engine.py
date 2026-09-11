@@ -120,13 +120,11 @@ class Engine:
                 if gh.name == "Blinky":
                     dx = self.player.x - int(gh.x)
                     dy = self.player.y - int(gh.y)
-                    if 0 <= self.player.x + dx <= self.maze._width - 1:
+                    if 0 <= self.player.x + dx <= self.maze._width - 1 and 0 <= self.player.y + dy <= self.maze._height - 1:
                         x = self.player.x + dx
-                    else:
-                        x = self.player.x
-                    if 0 <= self.player.y + dy <= self.maze._height - 1:
                         y = self.player.y + dy
                     else:
+                        x = self.player.x
                         y = self.player.y
             target = (x, y)
 
@@ -146,12 +144,16 @@ class Engine:
             else:
                 speed = 0.05
             if ghost.x < target_x:
+                ghost.direction = "right"
                 ghost.x = round(ghost.x + speed, 2)
             elif ghost.x > target_x:
+                ghost.direction = "left"
                 ghost.x = round(ghost.x - speed, 2)
             if ghost.y < target_y:
+                ghost.direction = "down"
                 ghost.y = round(ghost.y + speed, 2)
             elif ghost.y > target_y:
+                ghost.direction = "up"
                 ghost.y = round(ghost.y - speed, 2)
 
     def update(self):

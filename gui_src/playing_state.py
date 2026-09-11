@@ -12,6 +12,9 @@ WALL_COLOR = (0, 0, 255)
 PACGUM_COLOR = name_to_rgb('white')
 SUPER_PACGUM_COLOR = name_to_rgb('gold')
 PACMAN_COLOR = name_to_rgb('yellow')
+ICON_COLOR = (255, 255, 255)
+VALUE_COLOR = (255, 255, 0)
+TIME_WARN_COLOR = (255, 60, 60)
 
 DEATH_FRAME_DURATION = 80
 DEATH_FRAME_COUNT = 16
@@ -247,44 +250,59 @@ class HUD:
     def __init__(self, engine: Engine, state: 'PlayingState'):
         self.engine = engine
         self.state = state
-        self.font = pygame.font.Font(None, 36)
+        self.font_label = pygame.font.Font("resources/PressStart2P-Regular.ttf", 16)
+        self.font_value = pygame.font.Font("resources/PressStart2P-Regular.ttf", 22)
+        self.font_icon = pygame.font.SysFont("dejavusans", 28)
 
-    def draw_score(self, screen: pygame.Surface):
-        score_text = self.font.render(
-            f"Score: {self.engine.score}",
-            True,
-            SCORE_COLOR
+        life_size = (50, 50)
+        self.life_full = pygame.transform.scale(
+            pygame.image.load("assets/pacman_1.png").convert_alpha(), life_size
         )
-        screen.blit(score_text, (20, 20))
+        self.life_empty = pygame.transform.scale(
+            pygame.image.load("assets/pacman_1.png").convert_alpha(), life_size
+        )
 
-    def draw_time(self, screen: pygame.Surface):
-        elapsed = time.time() - self.state.level_start - self.state.total_paused
-        remaining = max(0, self.engine.level_max_time - elapsed)
-        time_text = self.font.render(f"Time: {int(remaining)}", True, SCORE_COLOR)
-        screen.blit(time_text, (20, 50))
+    def _draw_item(self, screen: pygame.Surface, icon, value, x, y):
+        icon_surf = self.font_icon.render(icon, True, ICON_COLOR)
+        value_surf = self.font_value.render(value, True, VALUE_COLOR)
+        screen.blit(icon_surf, (x, y))
+        screen.blit(value_surf, (x + icon_surf.get_width() + 8, y + 2))
 
     def draw_lives(self, screen: pygame.Surface):
-        lives_text = self.font.render(
-            f"Lives: {self.engine.player.lives}/{self.engine.lives}",
-            True,
-            SCORE_COLOR
-        )
-        screen.blit(lives_text, (300, 20))
+        hud_center_y = self.state.offset_y // 2 - 15
+        start_x = 40
+        spacing = 60
 
-    def draw_level(self, screen: pygame.Surface):
-        level_text = self.font.render(
-            f"Level: {self.engine.current_level}/{len(self.engine.levels)}",
-            True,
-            SCORE_COLOR
-        )
-        screen.blit(level_text, (600, 20))
+        for i in range(self.engine.lives):
+            x = start_x + i * spacing
+            if i < self.engine.player.lives:
+                screen.blit(self.life_full, (x, hud_center_y))
+            else:
+                screen.blit(self.life_empty, (x, hud_center_y))
+
+    def draw_right(self, screen: pygame.Surface):
+        elapsed = time.time() - self.state.level_start - self.state.total_paused
+        remaining = max(0, self.engine.level_max_time - elapsed)
+
+        hud_center_y = self.state.offset_y // 2 - 14
+
+        score_x = 980
+        level_x = 1300
+        time_x = 1620
+
+        self._draw_item(screen, "★", str(self.engine.score), score_x, hud_center_y)
+        self._draw_item(screen, "◎", f"{self.engine.current_level}/{len(self.engine.levels)}", level_x, hud_center_y)
+
+        time_color = TIME_WARN_COLOR if remaining <= 15 else VALUE_COLOR
+        icon_surf = self.font_icon.render("◷", True, ICON_COLOR)
+        value_surf = self.font_value.render(f"{int(remaining)}s", True, time_color)
+        screen.blit(icon_surf, (time_x, hud_center_y))
+        screen.blit(value_surf, (time_x + icon_surf.get_width() + 8, hud_center_y + 2))
+        self.life_empty.set_alpha(50)
 
     def render(self, screen: pygame.Surface):
-        self.draw_score(screen)
-        self.draw_time(screen)
+        self.draw_right(screen)
         self.draw_lives(screen)
-        self.draw_level(screen)
-
 
 class PlayingState(GameState):
     def __init__(self, engine: Engine, screen: pygame.Surface, fps: int = 30):

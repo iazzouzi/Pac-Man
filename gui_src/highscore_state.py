@@ -19,19 +19,24 @@ class HighscoreState(GameState):
         self.top_scores = top_scores
         self.screen_width = screen_width
         self.screen_height = screen_height
-        score_w = 1300
-        score_h = 130
-        gap = 25
+        score_w = 1150
+        score_h = 75
+        gap = 12
         sx = screen_width // 2 - score_w // 2
-        sy = screen_height // 2 - 350
+        sy = screen_height // 2 - 435
         self.scores_rect = {
             i: pygame.Rect(sx, sy + (score_h + gap) * i, score_w, score_h)
             for i in range(len(top_scores.items()))
         }
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_scores = pygame.font.Font("resources/PressStart2P-Regular.ttf", 18)
+        self.font_empty = pygame.font.Font("resources/PressStart2P-Regular.ttf", 80)
         self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 32)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
+        self.font_rank = pygame.font.Font("resources/PressStart2P-Regular.ttf", 16)
+        self.crown = pygame.transform.smoothscale(pygame.image.load("assets/crown.png").convert_alpha(), (80, 80))
+        self.trophy = pygame.transform.smoothscale(pygame.image.load("assets/trophy.png").convert_alpha(), (60,60))
+        self.medal = pygame.transform.smoothscale(pygame.image.load("assets/medal.png").convert_alpha(), (80,60))
         self.bg = AnimatedBackground()
 
     def handle_events(self, events):
@@ -52,20 +57,28 @@ class HighscoreState(GameState):
         hovered = self.arrow_rect.collidepoint(pygame.mouse.get_pos())
         arrow_color = ARROW_HOVER_COLOR if hovered else ARROW_COLOR
         arrow = self.font_arrow.render("←", True, arrow_color)
-        screen.blit(title, title.get_rect(midtop=(self.screen_width // 2, 75)))
+        screen.blit(title, title.get_rect(midtop=(self.screen_width // 2, 40)))
         screen.blit(arrow, arrow.get_rect(topleft=(50, 50)))
+        if not self.top_scores:
+            no_scores = self.font_empty.render("No scores yet!", True, NAME_COLOR)
+            screen.blit(no_scores, no_scores.get_rect(center=(self.screen_width // 2, self.screen_height // 2)))
+            return
         for rect, scores in zip(self.scores_rect.items(), self.top_scores.items()):
             pygame.draw.rect(screen, BOX_BG_COLOR, rect[1], border_radius=8)
             pygame.draw.rect(screen, BOX_BORDER, rect[1], width=2, border_radius=10)
             name = self.font_scores.render(scores[0], True, NAME_COLOR)
             score = self.font_scores.render(str(scores[1]), True, SCORE_COLOR)
-            screen.blit(score, score.get_rect(center = rect[1].center))
-            screen.blit(name, name.get_rect(midleft=(rect[1].left + 160, rect[1].centery)))
-            if rect[0] == 0 :
-                pygame.draw.circle(screen, name_to_rgb('purple'), (rect[1].right - 270, rect[1].centery), 30)
-            elif rect[0] == 1 :
-                pygame.draw.circle(screen, name_to_rgb('silver'), (rect[1].right - 270, rect[1].centery), 30)
-            elif rect[0] == 2 :
-                pygame.draw.circle(screen, name_to_rgb('lightblue'), (rect[1].right - 270, rect[1].centery), 30)
-            else :
-                pygame.draw.circle(screen, name_to_rgb('crimson'), (rect[1].right - 270, rect[1].centery), 30)
+            screen.blit(score, score.get_rect(midright=(rect[1].right - 160, rect[1].centery)))
+            screen.blit(name, name.get_rect(center=rect[1].center))
+            icon_x = rect[1].left + 100
+            icon_y = rect[1].centery
+            if rect[0] == 0:
+                screen.blit(self.crown, self.crown.get_rect(center=(icon_x, icon_y)))
+            elif rect[0] == 1:
+                screen.blit(self.trophy, self.trophy.get_rect(center=(icon_x, icon_y)))
+            elif rect[0] == 2:
+                screen.blit(self.medal, self.medal.get_rect(center=(icon_x, icon_y)))
+            else:
+                pygame.draw.circle(screen, name_to_rgb('silver'), (icon_x, icon_y), 30, 3)
+                rank_text = self.font_rank.render(str(rect[0] + 1), True, name_to_rgb('silver'))
+                screen.blit(rank_text, rank_text.get_rect(center=(icon_x, icon_y)))

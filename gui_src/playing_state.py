@@ -149,8 +149,6 @@ class PlayerRenderer:
 
 
 class DeathAnimationRenderer:
-    """Plays the 16-frame Pac-Man death sprite animation without blocking."""
-
     def __init__(self):
         size = (CELL_SIZE - 15, CELL_SIZE - 15)
 
@@ -170,7 +168,6 @@ class DeathAnimationRenderer:
         self.draw_y = 0
 
     def start(self, draw_x: int, draw_y: int):
-        """Begin playing the animation at the pixel position of the dead Pac-Man."""
         self.active = True
         self.frame_index = 0
         self.last_frame_time = pygame.time.get_ticks()
@@ -178,7 +175,6 @@ class DeathAnimationRenderer:
         self.draw_y = draw_y
 
     def update_and_draw(self, screen: pygame.Surface) -> bool:
-        """Draw the current death frame. Returns True when animation is complete."""
         if not self.active:
             return False
         now = pygame.time.get_ticks()
@@ -245,6 +241,7 @@ class GhostRenderer:
                 frame = self.frame_sets[key][idx]
 
             screen.blit(frame, (x, y))
+
 
 class HUD:
     def __init__(self, engine: Engine, state: 'PlayingState'):

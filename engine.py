@@ -178,7 +178,7 @@ class Engine:
                 if ghost.edible:
                     self.eating_ghost_sound.play()
                     self.score += self.points_per_ghost
-                    sleep(1.6)
+                    # sleep(1.6)
                     self.return_sound.play()
                     ghost.edible = False
                     ghost.tkal = True

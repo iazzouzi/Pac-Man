@@ -38,11 +38,11 @@ class InstructionsState(GameState):
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
         self.font_title = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 32)
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 32)
         self.font_section = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 20)
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 20)
         self.font_body = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 17)
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 17)
         self.bg = AnimatedBackground()
 
         p = engine.points_per_pacgum

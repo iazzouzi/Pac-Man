@@ -11,6 +11,7 @@ import os
 import sys
 
 from models import Config
+from engine import Engine
 
 
 class Parser:
@@ -76,7 +77,7 @@ class Parser:
         if len(sys.argv) > 1:
             file = sys.argv[1]
         else:
-            file = "config.json"
+            file = Engine.get_asset_path("config.json")
         Parser.filePreprocess(file)
         try:
             with open(file) as infile:

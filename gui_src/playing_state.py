@@ -220,10 +220,10 @@ class PlayerRenderer:
             )
 
         base_frames = [
-            load("assets/pacman_0.png"),
-            load("assets/pacman_1.png"),
-            load("assets/pacman_2.png"),
-            load("assets/pacman_1.png"),
+            load(Engine.get_asset_path("assets/pacman_0.png")),
+            load(Engine.get_asset_path("assets/pacman_1.png")),
+            load(Engine.get_asset_path("assets/pacman_2.png")),
+            load(Engine.get_asset_path("assets/pacman_1.png")),
         ]
 
         def rotate(surface: Any, angle: float) -> Any:
@@ -311,7 +311,7 @@ class DeathAnimationRenderer:
             """
             return pygame.transform.scale(
                 pygame.image.load(
-                    f"assets/pacman_death_{i}.png"
+                    Engine.get_asset_path(f"assets/pacman_death_{i}.png")
                 ).convert_alpha(), size
             )
 
@@ -404,27 +404,31 @@ class GhostRenderer:
 
         self.frame_sets = {
             "Blinky": [
-                load("assets/blinky_1.png"),
-                load("assets/blinky_2.png"),
+                load(Engine.get_asset_path("assets/blinky_1.png")),
+                load(Engine.get_asset_path("assets/blinky_2.png")),
             ],
             "Pinky": [
-                load("assets/pinky_1.png"),
-                load("assets/pinky_2.png"),
+                load(Engine.get_asset_path("assets/pinky_1.png")),
+                load(Engine.get_asset_path("assets/pinky_2.png")),
             ],
             "Inky": [
-                load("assets/inky_1.png"),
-                load("assets/inky_2.png"),
+                load(Engine.get_asset_path("assets/inky_1.png")),
+                load(Engine.get_asset_path("assets/inky_2.png")),
             ],
             "Clyde": [
-                load("assets/clyde_1.png"),
-                load("assets/clyde_2.png"),
+                load(Engine.get_asset_path("assets/clyde_1.png")),
+                load(Engine.get_asset_path("assets/clyde_2.png")),
             ],
             "scared": [
-                load("assets/scared_1.png"),
-                load("assets/scared_2.png"),
+                load(Engine.get_asset_path("assets/scared_1.png")),
+                load(Engine.get_asset_path("assets/scared_2.png")),
             ],
-            "eyes_left":  [load("assets/eyes_2_left.png")],
-            "eyes_right": [load("assets/eyes_2_right.png")],
+            "eyes_left": [
+                load(Engine.get_asset_path("assets/eyes_2_left.png"))
+            ],
+            "eyes_right": [
+                load(Engine.get_asset_path("assets/eyes_2_right.png"))
+            ],
         }
 
         self.frame_index = {key: 0 for key in self.frame_sets}
@@ -504,17 +508,23 @@ class HUD:
         """
         self.engine = engine
         self.state = state
-        font_path = "resources/PressStart2P-Regular.ttf"
+        font_path = Engine.get_asset_path("resources/PressStart2P-Regular.ttf")
         self.font_label = pygame.font.Font(font_path, 16)
         self.font_value = pygame.font.Font(font_path, 22)
         self.font_icon = pygame.font.SysFont("dejavusans", 28)
 
         life_size = (50, 50)
         self.life_full = pygame.transform.scale(
-            pygame.image.load("assets/pacman_1.png").convert_alpha(), life_size
+            pygame.image.load(
+                Engine.get_asset_path("assets/pacman_1.png")
+            ).convert_alpha(),
+            life_size,
         )
         self.life_empty = pygame.transform.scale(
-            pygame.image.load("assets/pacman_1.png").convert_alpha(), life_size
+            pygame.image.load(
+                Engine.get_asset_path("assets/pacman_1.png")
+            ).convert_alpha(),
+            life_size,
         )
 
     def _draw_item(

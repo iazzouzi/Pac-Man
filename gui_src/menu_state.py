@@ -2,6 +2,7 @@ import pygame
 from typing import Any
 from .game_state import GameState
 from .background import AnimatedBackground
+from engine import Engine
 from webcolors import name_to_rgb, hex_to_rgb
 
 OPTIONS_COLOR_TEXT = hex_to_rgb('#222222')
@@ -21,9 +22,11 @@ class MainMenuState(GameState):
             screen_width (int): The width of the screen.
             screen_height (int): The height of the screen.
         """
-        self.font = pygame.font.Font("resources/PressStart2P-Regular.ttf", 19)
+        self.font = pygame.font.Font(
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 19
+        )
         self.font_title = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 70
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 70
         )
 
         self.bg = AnimatedBackground()

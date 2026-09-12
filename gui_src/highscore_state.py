@@ -2,6 +2,7 @@ import pygame
 from typing import Any
 from .background import AnimatedBackground
 from .game_state import GameState
+from engine import Engine
 from webcolors import name_to_rgb, hex_to_rgb
 
 BOX_BG_COLOR = (20, 20, 40)
@@ -45,33 +46,33 @@ class HighscoreState(GameState):
         }
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_scores = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 18
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 18
         )
         self.font_empty = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 80
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 80
         )
         self.font_title = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 32
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 32
         )
         self.font_arrow = pygame.font.SysFont(
             "dejavusans", 90
         )
         self.font_rank = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 16
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 16
         )
         self.crown = pygame.transform.smoothscale(
             pygame.image.load(
-                "assets/crown.png"
+                Engine.get_asset_path("assets/crown.png")
             ).convert_alpha(), (80, 80)
         )
         self.trophy = pygame.transform.smoothscale(
             pygame.image.load(
-                "assets/trophy.png"
+                Engine.get_asset_path("assets/trophy.png")
             ).convert_alpha(), (60, 60)
         )
         self.medal = pygame.transform.smoothscale(
             pygame.image.load(
-                "assets/medal.png"
+                Engine.get_asset_path("assets/medal.png")
             ).convert_alpha(), (80, 60)
         )
         self.bg = AnimatedBackground()

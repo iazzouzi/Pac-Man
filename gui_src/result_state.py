@@ -45,16 +45,16 @@ class GameResultState(GameState):
         self.cx = screen_width // 2
         self.cy = screen_height // 2 - 150
         self.font_result = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 80
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 80
         )
         self.font_score = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 45
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 45
         )
         self.font_btn = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 19
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 19
         )
         self.font_input = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 14
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 14
         )
         self.user_txt = ''
         self.input_rect = pygame.Rect(

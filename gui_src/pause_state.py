@@ -4,6 +4,7 @@ from webcolors import name_to_rgb, hex_to_rgb
 
 from .background import AnimatedBackground
 from .game_state import GameState
+from engine import Engine
 
 OPTIONS_COLOR_BUTTON = name_to_rgb('gold')
 HOVER_COLOR_BUTTON = hex_to_rgb('#1e1e1e')
@@ -26,10 +27,10 @@ class PauseState(GameState):
             None
         """
         self.font_button = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 19
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 19
         )
         self.font_title = pygame.font.Font(
-            "resources/PressStart2P-Regular.ttf", 70
+            Engine.get_asset_path("resources/PressStart2P-Regular.ttf"), 70
         )
         button_w = 370
         button_h = 75

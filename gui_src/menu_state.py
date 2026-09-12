@@ -1,4 +1,5 @@
 import pygame
+from typing import Any
 from .game_state import GameState
 from .background import AnimatedBackground
 from webcolors import name_to_rgb, hex_to_rgb
@@ -13,7 +14,9 @@ OUTLINE_COLOR = name_to_rgb('gold')
 class MainMenuState(GameState):
     def __init__(self, screen_width: int, screen_height: int):
         self.font = pygame.font.Font("resources/PressStart2P-Regular.ttf", 19)
-        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 70)
+        self.font_title = pygame.font.Font(
+            "resources/PressStart2P-Regular.ttf", 70
+        )
 
         self.bg = AnimatedBackground()
 
@@ -24,12 +27,22 @@ class MainMenuState(GameState):
         start_y = screen_height // 2 - 100
 
         self.rect_start = pygame.Rect(x, start_y, button_w, button_h)
-        self.rect_high  = pygame.Rect(x, start_y + (button_h + gap), button_w, button_h)
-        self.rect_inst  = pygame.Rect(x, start_y + (button_h + gap) * 2, button_w, button_h)
-        self.rect_exit  = pygame.Rect(x, start_y + (button_h + gap) * 3, button_w, button_h)
-    def handle_events(self, events):
+        self.rect_high = pygame.Rect(
+            x, start_y + (button_h + gap),
+            button_w, button_h
+        )
+        self.rect_inst = pygame.Rect(
+            x, start_y + (button_h + gap) * 2,
+            button_w, button_h
+        )
+        self.rect_exit = pygame.Rect(
+            x, start_y + (button_h + gap) * 3,
+            button_w, button_h
+        )
+
+    def handle_events(self, events: Any) -> Any:
         for event in events:
-            if event.type == pygame.QUIT :
+            if event.type == pygame.QUIT:
                 return 'quit'
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.rect_start.collidepoint(event.pos):
@@ -41,10 +54,10 @@ class MainMenuState(GameState):
                 elif self.rect_exit.collidepoint(event.pos):
                     return 'quit'
 
-    def update(self):
+    def update(self) -> Any:
         self.bg.update(1 / 60)
 
-    def render(self, screen:pygame.Surface):
+    def render(self, screen: pygame.Surface) -> None:
         self.bg.render(screen)
         self.draw_title(screen)
         self.draw_start(screen)
@@ -52,7 +65,9 @@ class MainMenuState(GameState):
         self.draw_instructions(screen)
         self.draw_exit(screen)
 
-    def draw_button(self, screen: pygame.Surface, rect: pygame.Rect, label: str):
+    def draw_button(
+        self, screen: pygame.Surface, rect: pygame.Rect, label: str
+    ) -> None:
         mouse = pygame.mouse.get_pos()
         hovered = rect.collidepoint(mouse)
         color = HOVER_COLOR_BUTTON if hovered else OPTIONS_COLOR_BUTTON
@@ -63,20 +78,22 @@ class MainMenuState(GameState):
 
         text = self.font.render(label, True, text_color)
         screen.blit(text, text.get_rect(center=rect.center))
-    
-    def draw_title(self, screen: pygame.Surface):
+
+    def draw_title(self, screen: pygame.Surface) -> None:
         text = self.font_title.render("PAC-MAN", True, OPTIONS_COLOR_BUTTON)
-        text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 4))
+        text_rect = text.get_rect(
+            center=(screen.get_width() // 2, screen.get_height() // 4)
+        )
         screen.blit(text, text_rect)
 
-    def draw_start(self, screen):
+    def draw_start(self, screen: pygame.Surface) -> None:
         self.draw_button(screen, self.rect_start, "Start Game")
 
-    def draw_highscore(self, screen):
+    def draw_highscore(self, screen: pygame.Surface) -> None:
         self.draw_button(screen, self.rect_high, "View Highscores")
 
-    def draw_instructions(self, screen):
+    def draw_instructions(self, screen: pygame.Surface) -> None:
         self.draw_button(screen, self.rect_inst, "Instructions")
 
-    def draw_exit(self, screen):
+    def draw_exit(self, screen: pygame.Surface) -> None:
         self.draw_button(screen, self.rect_exit, "Exit")

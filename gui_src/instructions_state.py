@@ -1,4 +1,5 @@
 import pygame
+from typing import Any
 
 from engine import Engine
 from .background import AnimatedBackground
@@ -13,15 +14,24 @@ TEXT_COLOR = name_to_rgb('white')
 BOX_BG = (20, 20, 40)
 BOX_BORDER = name_to_rgb('gold')
 
+
 class InstructionsState(GameState):
-    def __init__(self, screen_width, screen_height, engine: Engine):
+    def __init__(
+            self,
+            screen_width: int,
+            screen_height: int,
+            engine: Engine
+            ) -> None:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
         self.font_arrow = pygame.font.SysFont("dejavusans", 90)
-        self.font_title = pygame.font.Font("resources/PressStart2P-Regular.ttf", 32)
-        self.font_section = pygame.font.Font("resources/PressStart2P-Regular.ttf", 20)
-        self.font_body = pygame.font.Font("resources/PressStart2P-Regular.ttf", 17)
+        self.font_title = pygame.font.Font(
+            "resources/PressStart2P-Regular.ttf", 32)
+        self.font_section = pygame.font.Font(
+            "resources/PressStart2P-Regular.ttf", 20)
+        self.font_body = pygame.font.Font(
+            "resources/PressStart2P-Regular.ttf", 17)
         self.bg = AnimatedBackground()
 
         p = engine.points_per_pacgum
@@ -32,18 +42,23 @@ class InstructionsState(GameState):
 
         self.instructions: list[tuple[str, list[str]]] = [
             ("Objective & Scoring", [
-                "Clear all PacGums in the maze to complete the level and advance.",
+                "Clear all PacGums in the maze to"
+                " complete the level and advance.",
                 f"Eating a PacGum earns {p} points.",
-                f"Eating a Super PacGum earns {sp} points and makes ghosts vulnerable.",
+                f"Eating a Super PacGum earns {sp}"
+                " points and makes ghosts vulnerable.",
                 f"Eating an edible ghost earns {gp} points.",
-                f"You start with {lives} lives. Survive all 10 levels to win.",
-                f"Each level has a {t}s time limit — keep an eye on the timer!",
+                f"You start with {lives} lives."
+                " Survive all 10 levels to win.",
+                f"Each level has a {t}s time limit"
+                " — keep an eye on the timer!",
             ]),
             ("Super PacGums & Ghosts", [
                 "Four Super PacGums sit in the corners of the maze.",
                 "Eating one turns all ghosts blue and edible for 10 seconds.",
                 f"Move into a blue ghost to eat it for {gp} points.",
-                "Touching a normal ghost costs a life and resets all positions.",
+                "Touching a normal ghost costs a"
+                " life and resets all positions.",
                 "Blinky (Red) chases you directly.",
                 "Pinky (Pink) ambushes 2 cells ahead of your direction.",
                 "Inky (Cyan) uses Blinky's position to flank you.",
@@ -52,7 +67,8 @@ class InstructionsState(GameState):
             ("Controls", [
                 "Arrow Keys or WASD — move Pac-Man in four directions.",
                 "Escape — pause the game.",
-                "Your input is buffered: Pac-Man turns as soon as the path clears.",
+                "Your input is buffered: Pac-Man"
+                " turns as soon as the path clears.",
             ]),
             ("Cheat Mode", [
                 "0 — toggle Invincibility (ghosts cannot kill you).",
@@ -69,7 +85,7 @@ class InstructionsState(GameState):
             screen_height - 160 - pad - 50,
         )
 
-    def handle_events(self, events):
+    def handle_events(self, events: Any) -> Any:
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -79,20 +95,29 @@ class InstructionsState(GameState):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if self.arrow_rect.collidepoint(event.pos):
                     return 'main'
-    def update(self):
+
+    def update(self) -> Any:
         self.bg.update(1 / 60)
-    def render(self, screen):
+
+    def render(self, screen: pygame.Surface) -> None:
         self.bg.render(screen)
 
         title = self.font_title.render("Instructions", True, TITLE_COLOR)
-        screen.blit(title, title.get_rect(midtop=(self.screen_width // 2, 75)))
+        screen.blit(
+            title,
+            title.get_rect(midtop=(self.screen_width // 2, 75))
+        )
 
         hovered = self.arrow_rect.collidepoint(pygame.mouse.get_pos())
-        arrow = self.font_arrow.render("←", True, ARROW_HOVER_COLOR if hovered else ARROW_COLOR)
+        color = ARROW_HOVER_COLOR if hovered else ARROW_COLOR
+        arrow = self.font_arrow.render("←", True, color)
         screen.blit(arrow, arrow.get_rect(topleft=(50, 50)))
 
         pygame.draw.rect(screen, BOX_BG, self.box_rect, border_radius=10)
-        pygame.draw.rect(screen, BOX_BORDER, self.box_rect, width=2, border_radius=10)
+        pygame.draw.rect(
+            screen, BOX_BORDER, self.box_rect,
+            width=2, border_radius=10
+        )
 
         x = self.box_rect.x + 20
         y = self.box_rect.y + 23

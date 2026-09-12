@@ -8,7 +8,8 @@ class GameState:
         """Handle user events for the game state.
 
         Args:
-            events (Any): A collection of events (e.g., from pygame.event.get()).
+            events (Any): A collection of events,
+                (e.g., from pygame.event.get()).
 
         Returns:
             Any: The result of the event handling, indicating the next state.

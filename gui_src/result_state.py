@@ -19,7 +19,9 @@ OUTLINE_COLOR = name_to_rgb('gold')
 
 
 class GameResultState(GameState):
-    """Represents the game result state, handling both victory and game over scenarios."""
+    """Represents the game result state,
+        handling both victory and game over scenarios.
+    """
 
     def __init__(
         self, score: int, highscore_filename: str, result: str,
@@ -92,7 +94,8 @@ class GameResultState(GameState):
             events (Any): A list of pygame events to process.
 
         Returns:
-            Any: A string indicating the next state, or None if no state change is needed.
+            Any: A string indicating the next state,
+                or None if no state change is needed.
         """
         for event in events:
             if event.type == pygame.QUIT:
@@ -145,7 +148,8 @@ class GameResultState(GameState):
         """Renders the result screen to the surface.
 
         Args:
-            screen (pygame.Surface): The surface to render the result screen on.
+            screen (pygame.Surface): The surface to
+                render the result screen on.
 
         Returns:
             None

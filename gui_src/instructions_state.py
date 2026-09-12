@@ -103,7 +103,8 @@ class InstructionsState(GameState):
             events (Any): A list of pygame events to process.
 
         Returns:
-            Any: A string indicating the next state ('quit' or 'main'), or None.
+            Any: A string indicating the next state ('quit' or 'main'),
+                or None.
         """
         for event in events:
             if event.type == pygame.QUIT:

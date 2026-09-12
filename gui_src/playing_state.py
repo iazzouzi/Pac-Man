@@ -27,7 +27,8 @@ class MazeRenderer:
         maze (list[list[int]]): The maze grid data representing walls.
         offset_x (float): The horizontal offset for rendering.
         offset_y (float): The vertical offset for rendering.
-        maze_directions (list[list[dict[str, bool]]]): Parsed directional walls.
+        maze_directions (list[list[dict[str, bool]]]):
+            Parsed directional walls.
     """
     def __init__(
             self, maze: list[list[int]],
@@ -35,7 +36,8 @@ class MazeRenderer:
         """Initializes the MazeRenderer.
 
         Args:
-            maze (list[list[int]]): A 2D list containing integer values for wall directions.
+            maze (list[list[int]]): A 2D list containing integer values
+                    for wall directions.
             offset_x (float): The horizontal offset for maze rendering.
             offset_y (float): The vertical offset for maze rendering.
         """
@@ -48,7 +50,8 @@ class MazeRenderer:
         """Converts the integer maze representation into boolean directions.
 
         Returns:
-            list[list[dict[str, bool]]]: A 2D list indicating wall presence in N, E, S, W directions.
+            list[list[dict[str, bool]]]: A 2D list indicating
+                    wall presence in N, E, S, W directions.
         """
         cells_directions = []
         for row in self.maze:
@@ -181,7 +184,8 @@ class PlayerRenderer:
         player (Player): The player instance to track.
         offset_x (float): The horizontal render offset.
         offset_y (float): The vertical render offset.
-        frames (dict[str, list[Any]]): Dictionary of animation frames per direction.
+        frames (dict[str, list[Any]]): Dictionary of
+                        animation frames per direction.
         frame_index (int): Current frame index.
         last_frame_time (int): Last time the frame was updated.
         frame_duration (int): Duration of each frame in milliseconds.
@@ -360,8 +364,10 @@ class GhostRenderer:
         ghosts (list[Ghost]): The list of ghosts to render.
         offset_x (float): The horizontal render offset.
         offset_y (float): The vertical render offset.
-        frame_sets (dict[str, list[Any]]): Dictionary containing animations for each ghost state.
-        frame_index (dict[str, int]): Current animation frame index for each state.
+        frame_sets (dict[str, list[Any]]): Dictionary containing
+                            animations for each ghost state.
+        frame_index (dict[str, int]): Current animation frame
+                        index for each state.
         last_frame_time (dict[str, int]): Timestamp of the last frame update.
         frame_duration (int): Duration of each animation frame in milliseconds.
     """
@@ -684,7 +690,6 @@ class PlayingState(GameState):
 
     def update_renderers(self) -> None:
         """Updates all renderers based on the current maze and offsets.
-        
         Typically called when transitioning to a new level.
         """
         self.mazegen = self.engine.maze
@@ -719,8 +724,8 @@ class PlayingState(GameState):
         """Updates the game state logic, checking for win/loss conditions.
 
         Returns:
-            Any: A tuple ('gameover', score) or ('victory', score) if the game ends,
-                 otherwise None.
+            Any: A tuple ('gameover', score) or ('victory', score)
+                if the game ends, otherwise None.
         """
         if self.dying:
             return
@@ -815,7 +820,9 @@ class PlayingState(GameState):
         self.hud.render(screen)
 
     def move_player(self) -> None:
-        """Updates the player's position based on their current direction and speed."""
+        """Updates the player's position based on
+        their current direction and speed.
+        """
         x = self.engine.player.x
         y = self.engine.player.y
         assert self.engine.maze is not None
@@ -854,7 +861,8 @@ class PlayingState(GameState):
         Args:
             x (float): The current horizontal tile coordinate of the player.
             y (float): The current vertical tile coordinate of the player.
-            direction (str): The direction to move ('up', 'down', 'left', 'right').
+            direction (str): The direction to move
+                    ('up', 'down', 'left', 'right').
             maze (list[list[int]]): The maze grid representing walls.
 
         Returns:

@@ -16,7 +16,8 @@ ARROW_HOVER_COLOR = name_to_rgb('yellow')
 class HighscoreState(GameState):
     """Represents the highscore screen of the game.
 
-    This state displays the top scores achieved by players, including their ranks and icons.
+    This state displays the top scores achieved by players,
+        including their ranks and icons.
     """
     def __init__(
         self, screen_width: int, screen_height: int,
@@ -27,7 +28,8 @@ class HighscoreState(GameState):
         Args:
             screen_width (int): The width of the screen.
             screen_height (int): The height of the screen.
-            top_scores (dict[str, int]): A dictionary mapping player names to their top scores.
+            top_scores (dict[str, int]):
+                    A dictionary mapping player names to their top scores.
         """
         self.top_scores = top_scores
         self.screen_width = screen_width
@@ -81,7 +83,8 @@ class HighscoreState(GameState):
             events (Any): A list of pygame events to process.
 
         Returns:
-            Any: A string indicating the next state ('quit' or 'main'), or None.
+            Any: A string indicating the next state ('quit' or 'main'),
+                or None.
         """
         for event in events:
             if event.type == pygame.QUIT:

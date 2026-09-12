@@ -55,7 +55,8 @@ class MainMenuState(GameState):
             events (Any): A list of pygame events to process.
 
         Returns:
-            Any: A string indicating the next state, or None if no state change is needed.
+            Any: A string indicating the next state,
+                or None if no state change is needed.
         """
         for event in events:
             if event.type == pygame.QUIT:

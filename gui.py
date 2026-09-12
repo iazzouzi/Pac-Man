@@ -87,7 +87,8 @@ class Game:
         """Change the current game state based on the result.
 
         Args:
-            result (Any): The outcome from a state update or event, indicating the next state.
+            result (Any): The outcome from a state update or event,
+                indicating the next state.
         """
         if result == 'playing':
             self.engine.ready_sound.fadeout(1000)

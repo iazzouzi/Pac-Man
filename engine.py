@@ -273,6 +273,9 @@ class Engine:
                     self.edible_ghosts_sound.stop()
                     self.fail_sound.play()
                     self.player.lives -= 1
+                    for gh in self.maze.ghosts:
+                        gh.edible = False
+                        gh.tkal = False
                     self.ready = 0
                     self.ready_sound_channel = None
                     return 'death'

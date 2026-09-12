@@ -111,9 +111,10 @@ class Engine:
             ghost: The ghost to update.
         """
         assert self.maze is not None
+        px, py = round(self.player.x), round(self.player.y)
         if ghost.target is not None:
-            if ghost.target == (self.player.x, self.player.y):
-                if ghost.x == self.player.x and ghost.y == self.player.y:
+            if ghost.target == (px, py):
+                if ghost.x == px and ghost.y == py:
                     ghost.next = None
                     return
                 ghost.next = next(
@@ -128,69 +129,69 @@ class Engine:
 
         elif ghost.edible:
             if (
-                self.player.x < self.maze._width // 2
-                and self.player.y < self.maze._height // 2
+                px < self.maze._width // 2
+                and py < self.maze._height // 2
             ):
                 target = (self.maze._width - 1, self.maze._height - 1)
             elif (
-                self.player.x > self.maze._width // 2
-                and self.player.y > self.maze._height // 2
+                px > self.maze._width // 2
+                and py > self.maze._height // 2
             ):
                 target = (0, 0)
             elif (
-                self.player.x < self.maze._width // 2
-                and self.player.y > self.maze._height // 2
+                px < self.maze._width // 2
+                and py > self.maze._height // 2
             ):
                 target = (self.maze._width - 1, 0)
             else:
                 target = (0, self.maze._height - 1)
 
         elif ghost.name == "Blinky":
-            target = (self.player.x, self.player.y)
+            target = (px, py)
 
         elif ghost.name == "Pinky":
             if (
                 self.player.direction == "up"
-                and self.player.y - 2 >= 0
-                and self.player.x - 2 >= 0
+                and py - 2 >= 0
+                and px - 2 >= 0
             ):
-                target = (self.player.x - 2, self.player.y - 2)
+                target = (px - 2, py - 2)
             elif (
                 self.player.direction == "down"
-                and self.player.y + 2 <= self.maze._height - 1
+                and py + 2 <= self.maze._height - 1
             ):
-                target = (self.player.x, self.player.y + 2)
-            elif self.player.direction == "left" and self.player.x - 2 >= 0:
-                target = (self.player.x - 2, self.player.y)
+                target = (px, py + 2)
+            elif self.player.direction == "left" and px - 2 >= 0:
+                target = (px - 2, py)
             elif (
                 self.player.direction == "right"
-                and self.player.x + 2 <= self.maze._width - 1
+                and px + 2 <= self.maze._width - 1
             ):
-                target = (self.player.x + 2, self.player.y)
+                target = (px + 2, py)
             else:
-                target = (self.player.x, self.player.y)
+                target = (px, py)
 
         elif ghost.name == "Inky":
             for gh in self.maze.ghosts:
                 if gh.name == "Blinky":
-                    dx = self.player.x - int(gh.x)
-                    dy = self.player.y - int(gh.y)
+                    dx = px - int(gh.x)
+                    dy = py - int(gh.y)
                     if (
-                        0 <= self.player.x + dx <= self.maze._width - 1
-                        and 0 <= self.player.y + dy <= self.maze._height - 1
+                        0 <= px + dx <= self.maze._width - 1
+                        and 0 <= py + dy <= self.maze._height - 1
                     ):
-                        x = self.player.x + dx
-                        y = self.player.y + dy
+                        x = px + dx
+                        y = py + dy
                     else:
-                        x = self.player.x
-                        y = self.player.y
+                        x = px
+                        y = py
             target = (x, y)
 
         elif ghost.name == "Clyde":
-            dx = self.player.x - int(ghost.x)
-            dy = self.player.y - int(ghost.y)
+            dx = px - int(ghost.x)
+            dy = py - int(ghost.y)
             if dx * dx + dy * dy > 64:
-                target = (self.player.x, self.player.y)
+                target = (px, py)
             else:
                 target = (int(ghost.base_x), int(ghost.base_y))
         ghost.target = target

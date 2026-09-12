@@ -73,7 +73,8 @@ class InstructionsState(GameState):
                 "Blinky (Red) chases you directly.",
                 "Pinky (Pink) ambushes 2 cells ahead of your direction.",
                 "Inky (Cyan) uses Blinky's position to flank you.",
-                "Clyde (Orange) targets 2 cells behind you.",
+                "Clyde (Orange) chases you from afar, but"
+                " retreats to his corner when close.",
             ]),
             ("Controls", [
                 "Arrow Keys or WASD — move Pac-Man in four directions.",

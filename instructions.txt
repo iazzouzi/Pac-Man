@@ -1,0 +1,32 @@
+PAC-MAN
+
+Controls
+- Move: Arrow keys or WASD
+- Pause: Esc
+- Pause menu: Resume, Restart Game, Exit To Menu
+
+Cheats
+- 0: toggle invincibility (ghosts cannot kill you)
+- 1: toggle freeze ghosts
+- Space: skip the current level instantly
+
+Ghosts
+- Blinky (Red): chases you directly
+- Pinky (Pink): ambushes 2 cells ahead of your direction
+- Inky (Cyan): uses Blinky's position to flank you
+- Clyde (Orange): chases you from afar, retreats to his corner when close
+
+Main menu
+- Start Game, View Highscores, Instructions, Exit
+- Game goal: eat all PacGums to clear the level
+- Stay alive and finish all 10 levels to win
+
+Configuration
+- Edit config.json to change:
+  - highscore_filename
+  - levels: list of [width, height] pairs, one per level
+  - lives
+  - points_per_pacgum
+  - points_per_super_pacgum
+  - points_per_ghost
+  - level_max_time

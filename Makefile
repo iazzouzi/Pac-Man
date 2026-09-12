@@ -7,7 +7,9 @@ run:
 	@python3 pac-man.py config.json || true
 
 package:
-	@pyinstaller pac-man.spec; mv dist/pac-man .; rm -rf build dist || true
+	@pyinstaller pac-man.spec
+	@mv dist/pac-man .
+	@rm -rf build dist
 
 debug:
 	@python3 -m pdb pac-man.py config.json || true

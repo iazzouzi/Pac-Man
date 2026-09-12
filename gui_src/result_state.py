@@ -19,10 +19,24 @@ OUTLINE_COLOR = name_to_rgb('gold')
 
 
 class GameResultState(GameState):
+    """Represents the game result state, handling both victory and game over scenarios."""
+
     def __init__(
         self, score: int, highscore_filename: str, result: str,
         screen_width: int, screen_height: int
     ) -> None:
+        """Initializes the game result state.
+
+        Args:
+            score (int): The player's final score.
+            highscore_filename (str): The filename used to save highscores.
+            result (str): The result of the game ('victory' or 'gameover').
+            screen_width (int): The width of the screen.
+            screen_height (int): The height of the screen.
+
+        Returns:
+            None
+        """
         self.score = score
         self.highscore_filename = highscore_filename
         self.result = result
@@ -72,6 +86,14 @@ class GameResultState(GameState):
         self.bg = AnimatedBackground()
 
     def handle_events(self, events: Any) -> Any:
+        """Handles user input events for the result screen.
+
+        Args:
+            events (Any): A list of pygame events to process.
+
+        Returns:
+            Any: A string indicating the next state, or None if no state change is needed.
+        """
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -112,9 +134,22 @@ class GameResultState(GameState):
                         self.user_txt += event.unicode
 
     def update(self) -> Any:
+        """Updates the game result state.
+
+        Returns:
+            Any: None.
+        """
         self.bg.update(1 / 60)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders the result screen to the surface.
+
+        Args:
+            screen (pygame.Surface): The surface to render the result screen on.
+
+        Returns:
+            None
+        """
         self.bg.render(screen)
         if self.result == 'gameover':
             go_x = self.cx - self.gameovertext.get_width() // 2
@@ -163,6 +198,16 @@ class GameResultState(GameState):
         self, screen: pygame.Surface,
         rect: pygame.Rect, label: str
     ) -> None:
+        """Draws a button on the screen.
+
+        Args:
+            screen (pygame.Surface): The surface to draw the button on.
+            rect (pygame.Rect): The rectangular area of the button.
+            label (str): The text label to display on the button.
+
+        Returns:
+            None
+        """
         hovered = rect.collidepoint(pygame.mouse.get_pos())
         color = HOVER_COLOR_BUTTON if hovered else OPTIONS_COLOR_BUTTON
         text_color = HOVER_COLOR_TEXT if hovered else OPTIONS_COLOR_TEXT

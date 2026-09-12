@@ -13,7 +13,18 @@ OUTLINE_COLOR = name_to_rgb('gold')
 
 
 class PauseState(GameState):
+    """Represents the pause state of the game."""
+
     def __init__(self, screen_width: int, screen_height: int) -> None:
+        """Initializes the pause state.
+
+        Args:
+            screen_width (int): The width of the screen.
+            screen_height (int): The height of the screen.
+
+        Returns:
+            None
+        """
         self.font_button = pygame.font.Font(
             "resources/PressStart2P-Regular.ttf", 19
         )
@@ -36,6 +47,14 @@ class PauseState(GameState):
         self.bg = AnimatedBackground()
 
     def handle_events(self, events: Any) -> Any:
+        """Handles user input events for the pause menu.
+
+        Args:
+            events (Any): A list of pygame events to process.
+
+        Returns:
+            Any: A string indicating the next state, or None if no state change is needed.
+        """
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -51,9 +70,22 @@ class PauseState(GameState):
                     return 'main'
 
     def update(self) -> Any:
+        """Updates the pause state.
+
+        Returns:
+            Any: None.
+        """
         self.bg.update(1 / 60)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders the pause menu to the screen.
+
+        Args:
+            screen (pygame.Surface): The surface to render the menu on.
+
+        Returns:
+            None
+        """
         self.bg.render(screen)
         text = self.font_title.render("PAUSED", True, name_to_rgb('gold'))
         text_rect = text.get_rect(
@@ -71,6 +103,16 @@ class PauseState(GameState):
         self, screen: pygame.Surface,
         rect: pygame.Rect, label: str
     ) -> None:
+        """Draws a button on the screen.
+
+        Args:
+            screen (pygame.Surface): The surface to draw the button on.
+            rect (pygame.Rect): The rectangular area of the button.
+            label (str): The text label to display on the button.
+
+        Returns:
+            None
+        """
         hovered = rect.collidepoint(pygame.mouse.get_pos())
         color = HOVER_COLOR_BUTTON if hovered else OPTIONS_COLOR_BUTTON
         text_color = HOVER_COLOR_TEXT if hovered else OPTIONS_COLOR_TEXT

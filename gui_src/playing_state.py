@@ -21,15 +21,35 @@ DEATH_FRAME_COUNT = 16
 
 
 class MazeRenderer:
+    """Renders the maze grid and walls onto the screen.
+
+    Attributes:
+        maze (list[list[int]]): The maze grid data representing walls.
+        offset_x (float): The horizontal offset for rendering.
+        offset_y (float): The vertical offset for rendering.
+        maze_directions (list[list[dict[str, bool]]]): Parsed directional walls.
+    """
     def __init__(
             self, maze: list[list[int]],
             offset_x: float, offset_y: float):
+        """Initializes the MazeRenderer.
+
+        Args:
+            maze (list[list[int]]): A 2D list containing integer values for wall directions.
+            offset_x (float): The horizontal offset for maze rendering.
+            offset_y (float): The vertical offset for maze rendering.
+        """
         self.maze = maze
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.maze_directions = self.maze_to_directions()
 
     def maze_to_directions(self) -> list[list[dict[str, bool]]]:
+        """Converts the integer maze representation into boolean directions.
+
+        Returns:
+            list[list[dict[str, bool]]]: A 2D list indicating wall presence in N, E, S, W directions.
+        """
         cells_directions = []
         for row in self.maze:
             row_maze = []
@@ -52,6 +72,14 @@ class MazeRenderer:
             col: int,
             cell: dict[str, bool]
             ) -> None:
+        """Draws a single cell of the maze.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+            row (int): The row index of the cell.
+            col (int): The column index of the cell.
+            cell (dict[str, bool]): Dictionary of wall presences (N, E, S, W).
+        """
 
         x = col * CELL_SIZE + self.offset_x
         y = row * CELL_SIZE + self.offset_y
@@ -89,6 +117,11 @@ class MazeRenderer:
                 )
 
     def draw_maze(self, screen: pygame.Surface) -> None:
+        """Draws the entire maze.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         for row in range(len(self.maze_directions)):
             for col in range(len(self.maze_directions[row])):
                 self.draw_cell(
@@ -98,14 +131,33 @@ class MazeRenderer:
 
 
 class PacgumRenderer:
+    """Renders pacgums onto the screen.
+
+    Attributes:
+        offset_x (float): The horizontal offset for rendering.
+        offset_y (float): The vertical offset for rendering.
+        pacgums (list[Pacgum]): List of pacgums to render.
+    """
     def __init__(
             self, pacgums: list[Pacgum],
             offset_x: float, offset_y: float):
+        """Initializes the PacgumRenderer.
+
+        Args:
+            pacgums (list[Pacgum]): List of pacgums to render.
+            offset_x (float): The horizontal offset.
+            offset_y (float): The vertical offset.
+        """
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.pacgums = pacgums
 
     def draw_pacgums(self, screen: pygame.Surface) -> None:
+        """Draws all available pacgums.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         for pacgum in self.pacgums:
             if not pacgum.available:
                 continue
@@ -123,9 +175,27 @@ class PacgumRenderer:
 
 
 class PlayerRenderer:
+    """Renders the player character (Pac-Man) and animations.
+
+    Attributes:
+        player (Player): The player instance to track.
+        offset_x (float): The horizontal render offset.
+        offset_y (float): The vertical render offset.
+        frames (dict[str, list[Any]]): Dictionary of animation frames per direction.
+        frame_index (int): Current frame index.
+        last_frame_time (int): Last time the frame was updated.
+        frame_duration (int): Duration of each frame in milliseconds.
+    """
     def __init__(
         self, player: Player, offset_x: float, offset_y: float
     ) -> None:
+        """Initializes the PlayerRenderer.
+
+        Args:
+            player (Player): The player instance to track.
+            offset_x (float): Horizontal render offset.
+            offset_y (float): Vertical render offset.
+        """
         self.player = player
         self.offset_x = offset_x
         self.offset_y = offset_y
@@ -133,6 +203,14 @@ class PlayerRenderer:
         size = (CELL_SIZE - 15, CELL_SIZE - 15)
 
         def load(path: str) -> Any:
+            """Loads and scales an image from the given path.
+
+            Args:
+                path (str): The file path to the image.
+
+            Returns:
+                Any: The scaled pygame surface.
+            """
             return pygame.transform.scale(
                 pygame.image.load(path).convert_alpha(), size
             )
@@ -145,6 +223,15 @@ class PlayerRenderer:
         ]
 
         def rotate(surface: Any, angle: float) -> Any:
+            """Rotates a given surface by a specific angle.
+
+            Args:
+                surface (Any): The pygame surface to rotate.
+                angle (float): The angle to rotate by in degrees.
+
+            Returns:
+                Any: The rotated and scaled pygame surface.
+            """
             rotated = pygame.transform.rotate(surface, angle)
             return pygame.transform.scale(rotated, size)
 
@@ -163,6 +250,11 @@ class PlayerRenderer:
         self.frame_duration = 100
 
     def draw_player(self, screen: pygame.Surface) -> None:
+        """Draws the animated player onto the screen.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         now = pygame.time.get_ticks()
         if now - self.last_frame_time >= self.frame_duration:
             self.frame_index = (self.frame_index + 1) % 4
@@ -186,10 +278,29 @@ class PlayerRenderer:
 
 
 class DeathAnimationRenderer:
+    """Renders the death animation sequence for the player.
+
+    Attributes:
+        frames (list[Any]): List of death animation frames.
+        active (bool): Whether the death animation is currently playing.
+        frame_index (int): The current frame index.
+        last_frame_time (int): The timestamp of the last frame update.
+        draw_x (int): Horizontal draw coordinate.
+        draw_y (int): Vertical draw coordinate.
+    """
     def __init__(self) -> None:
+        """Initializes the DeathAnimationRenderer and loads its frames."""
         size = (CELL_SIZE - 15, CELL_SIZE - 15)
 
         def load(i: int) -> Any:
+            """Loads and scales a specific death frame by index.
+
+            Args:
+                i (int): Frame index.
+
+            Returns:
+                Any: Scaled pygame surface.
+            """
             return pygame.transform.scale(
                 pygame.image.load(
                     f"assets/pacman_death_{i}.png"
@@ -200,6 +311,7 @@ class DeathAnimationRenderer:
         self.reset()
 
     def reset(self) -> None:
+        """Resets the state of the death animation to inactive."""
         self.active = False
         self.frame_index = 0
         self.last_frame_time = 0
@@ -207,6 +319,12 @@ class DeathAnimationRenderer:
         self.draw_y = 0
 
     def start(self, draw_x: int, draw_y: int) -> None:
+        """Starts the death animation at the given coordinates.
+
+        Args:
+            draw_x (int): The x-coordinate to draw the animation.
+            draw_y (int): The y-coordinate to draw the animation.
+        """
         self.active = True
         self.frame_index = 0
         self.last_frame_time = pygame.time.get_ticks()
@@ -214,6 +332,14 @@ class DeathAnimationRenderer:
         self.draw_y = draw_y
 
     def update_and_draw(self, screen: pygame.Surface) -> bool:
+        """Updates animation state and draws current frame to the screen.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+
+        Returns:
+            bool: True if the animation just finished, False otherwise.
+        """
         if not self.active:
             return False
         now = pygame.time.get_ticks()
@@ -228,7 +354,25 @@ class DeathAnimationRenderer:
 
 
 class GhostRenderer:
+    """Renders the ghosts and their animations onto the screen.
+
+    Attributes:
+        ghosts (list[Ghost]): The list of ghosts to render.
+        offset_x (float): The horizontal render offset.
+        offset_y (float): The vertical render offset.
+        frame_sets (dict[str, list[Any]]): Dictionary containing animations for each ghost state.
+        frame_index (dict[str, int]): Current animation frame index for each state.
+        last_frame_time (dict[str, int]): Timestamp of the last frame update.
+        frame_duration (int): Duration of each animation frame in milliseconds.
+    """
     def __init__(self, ghosts: list[Ghost], offset_x: float, offset_y: float):
+        """Initializes the GhostRenderer.
+
+        Args:
+            ghosts (list[Ghost]): The list of ghosts.
+            offset_x (float): Horizontal render offset.
+            offset_y (float): Vertical render offset.
+        """
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.ghosts = ghosts
@@ -236,6 +380,14 @@ class GhostRenderer:
         size = (CELL_SIZE - 17, CELL_SIZE - 17)
 
         def load(path: str) -> Any:
+            """Loads and scales an image for ghost animation frames.
+
+            Args:
+                path (str): The file path to the image.
+
+            Returns:
+                Any: The scaled pygame surface.
+            """
             return pygame.transform.scale(
                 pygame.image.load(path).convert_alpha(), size
             )
@@ -273,6 +425,14 @@ class GhostRenderer:
         self.frame_duration = 150
 
     def _advance_frame(self, key: str) -> int:
+        """Advances the animation frame for a specific ghost state.
+
+        Args:
+            key (str): The animation key corresponding to a ghost or state.
+
+        Returns:
+            int: The updated frame index.
+        """
         now = pygame.time.get_ticks()
         if now - self.last_frame_time[key] >= self.frame_duration:
             self.frame_index[key] = (
@@ -283,6 +443,11 @@ class GhostRenderer:
         return self.frame_index[key]
 
     def draw_ghosts(self, screen: pygame.Surface) -> None:
+        """Draws all ghosts onto the screen with their current animation frame.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         for ghost in self.ghosts:
             blinky = self.frame_sets["Blinky"][0]
             w_offset = (
@@ -309,7 +474,24 @@ class GhostRenderer:
 
 
 class HUD:
+    """Renders the Heads-Up Display showing score, level, time, and lives.
+
+    Attributes:
+        engine (Engine): The main game engine instance.
+        state (PlayingState): The current game state.
+        font_label (pygame.font.Font): Font used for labels.
+        font_value (pygame.font.Font): Font used for dynamic values.
+        font_icon (pygame.font.Font): Font used for icons.
+        life_full (pygame.Surface): The image representing an available life.
+        life_empty (pygame.Surface): The image representing a lost life.
+    """
     def __init__(self, engine: Engine, state: 'PlayingState'):
+        """Initializes the HUD.
+
+        Args:
+            engine (Engine): The main game engine.
+            state (PlayingState): The active playing state.
+        """
         self.engine = engine
         self.state = state
         font_path = "resources/PressStart2P-Regular.ttf"
@@ -328,12 +510,26 @@ class HUD:
     def _draw_item(
         self, screen: pygame.Surface, icon: str, value: str, x: int, y: int
     ) -> None:
+        """Draws a single HUD item with an icon and a value.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+            icon (str): The icon text to display.
+            value (str): The value text to display.
+            x (int): The horizontal coordinate.
+            y (int): The vertical coordinate.
+        """
         icon_surf = self.font_icon.render(icon, True, ICON_COLOR)
         value_surf = self.font_value.render(value, True, VALUE_COLOR)
         screen.blit(icon_surf, (x, y))
         screen.blit(value_surf, (x + icon_surf.get_width() + 8, y + 2))
 
     def draw_lives(self, screen: pygame.Surface) -> None:
+        """Draws the player's remaining lives on the left side of the HUD.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         hud_center_y = int(self.state.offset_y // 2 - 15)
         start_x = 40
         spacing = 60
@@ -346,6 +542,11 @@ class HUD:
                 screen.blit(self.life_empty, (x, hud_center_y))
 
     def draw_right(self, screen: pygame.Surface) -> None:
+        """Draws the right section of the HUD (score, level, remaining time).
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         elapsed = (
             time.time()
             - self.state.level_start
@@ -387,12 +588,48 @@ class HUD:
         self.life_empty.set_alpha(50)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders all components of the HUD.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         self.draw_right(screen)
         self.draw_lives(screen)
 
 
 class PlayingState(GameState):
+    """The main game state handling gameplay logic, updating, and rendering.
+
+    Attributes:
+        level_start (float): The timestamp when the current level started.
+        total_paused (float): Total time spent in pause state.
+        pause_start (float): The timestamp when the game was last paused.
+        direction (str | None): The current movement direction of the player.
+        next_direction (str | None): The buffered next movement direction.
+        player_speed (float): The movement speed of the player per frame.
+        engine (Engine): The main game engine handling game logic.
+        mazegen (Any): The maze generator instance.
+        screen (pygame.Surface): The main pygame display surface.
+        hud (HUD): The Heads-Up Display instance.
+        maze_width (int): Total width of the maze in pixels.
+        maze_height (int): Total height of the maze in pixels.
+        offset_x (float): Horizontal offset to center the maze.
+        offset_y (float): Vertical offset to center the maze.
+        maze_renderer (MazeRenderer): Renderer for the maze grid.
+        pacgum_renderer (PacgumRenderer): Renderer for the pacgums.
+        ghost_renderer (GhostRenderer): Renderer for the ghosts.
+        player_renderer (PlayerRenderer): Renderer for the player.
+        death_renderer (DeathAnimationRenderer): Renderer for death animation.
+        dying (bool): Indicates if the death animation is currently playing.
+    """
     def __init__(self, engine: Engine, screen: Any, fps: int = 30) -> None:
+        """Initializes the PlayingState.
+
+        Args:
+            engine (Engine): The main game engine.
+            screen (Any): The main pygame display surface.
+            fps (int): Target frames per second. Defaults to 30.
+        """
         self.level_start = time.time()
         self.total_paused: float = 0.0
         self.pause_start: float = 0.0
@@ -446,6 +683,10 @@ class PlayingState(GameState):
         self.dying = False
 
     def update_renderers(self) -> None:
+        """Updates all renderers based on the current maze and offsets.
+        
+        Typically called when transitioning to a new level.
+        """
         self.mazegen = self.engine.maze
         assert self.mazegen is not None
 
@@ -475,6 +716,12 @@ class PlayingState(GameState):
         self.player_renderer.offset_y = self.offset_y
 
     def update(self) -> Any:
+        """Updates the game state logic, checking for win/loss conditions.
+
+        Returns:
+            Any: A tuple ('gameover', score) or ('victory', score) if the game ends,
+                 otherwise None.
+        """
         if self.dying:
             return
 
@@ -506,6 +753,15 @@ class PlayingState(GameState):
             self.level_start = time.time()
 
     def handle_events(self, events: Any) -> Any:
+        """Processes input events such as keyboard presses.
+
+        Args:
+            events (Any): An iterable of pygame events.
+
+        Returns:
+            Any: Returns a state string like 'quit' or 'pause' if requested,
+                 otherwise None.
+        """
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -536,6 +792,11 @@ class PlayingState(GameState):
                     self.engine.player.direction = "right"
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders the entire playing state onto the screen.
+
+        Args:
+            screen (pygame.Surface): The pygame surface to draw on.
+        """
         screen.fill((22, 22, 30))
 
         self.maze_renderer.draw_maze(screen)
@@ -554,6 +815,7 @@ class PlayingState(GameState):
         self.hud.render(screen)
 
     def move_player(self) -> None:
+        """Updates the player's position based on their current direction and speed."""
         x = self.engine.player.x
         y = self.engine.player.y
         assert self.engine.maze is not None
@@ -587,6 +849,17 @@ class PlayingState(GameState):
             direction: str,
             maze: list[list[int]]
             ) -> bool:
+        """Determines if the player can move in the requested direction.
+
+        Args:
+            x (float): The current horizontal tile coordinate of the player.
+            y (float): The current vertical tile coordinate of the player.
+            direction (str): The direction to move ('up', 'down', 'left', 'right').
+            maze (list[list[int]]): The maze grid representing walls.
+
+        Returns:
+            bool: True if movement is allowed, False otherwise.
+        """
         if not self.engine.ready:
             return False
         if x % 1 != 0 or y % 1 != 0:

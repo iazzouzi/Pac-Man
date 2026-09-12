@@ -16,12 +16,23 @@ BOX_BORDER = name_to_rgb('gold')
 
 
 class InstructionsState(GameState):
+    """Represents the instructions screen of the game.
+
+    This state displays the game rules, controls, and scoring mechanics.
+    """
     def __init__(
             self,
             screen_width: int,
             screen_height: int,
             engine: Engine
             ) -> None:
+        """Initializes the InstructionsState.
+
+        Args:
+            screen_width (int): The width of the screen.
+            screen_height (int): The height of the screen.
+            engine (Engine): The game engine instance containing game settings.
+        """
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.arrow_rect = pygame.Rect(50, 50, 70, 70)
@@ -86,6 +97,14 @@ class InstructionsState(GameState):
         )
 
     def handle_events(self, events: Any) -> Any:
+        """Handles user input events for the instructions state.
+
+        Args:
+            events (Any): A list of pygame events to process.
+
+        Returns:
+            Any: A string indicating the next state ('quit' or 'main'), or None.
+        """
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -97,9 +116,19 @@ class InstructionsState(GameState):
                     return 'main'
 
     def update(self) -> Any:
+        """Updates the instructions state logic.
+
+        Returns:
+            Any: None.
+        """
         self.bg.update(1 / 60)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders the instructions screen to the display.
+
+        Args:
+            screen (pygame.Surface): The main display surface to draw on.
+        """
         self.bg.render(screen)
 
         title = self.font_title.render("Instructions", True, TITLE_COLOR)

@@ -14,7 +14,14 @@ import pygame  # noqa: E402
 
 
 class Game:
+    """The main game class that manages the application state and loop."""
+
     def __init__(self, engine: Engine):
+        """Initialize the Game.
+
+        Args:
+            engine (Engine): The game engine instance to use.
+        """
         pygame.init()
         pygame.mixer.init()
         self.__game_fps = 30
@@ -48,6 +55,7 @@ class Game:
         self.playing_state: Optional[PlayingState] = None
 
     def run(self) -> None:
+        """Run the main game loop."""
         while self.running:
             events = pygame.event.get()
 
@@ -65,6 +73,7 @@ class Game:
             self.fps.tick(self.__game_fps)
 
     def reset_engine(self) -> None:
+        """Reset the game engine state for a new game or level."""
         self.engine.score = 0
         self.engine.current_level = 0
         self.engine.player.lives = self.engine.lives
@@ -75,6 +84,11 @@ class Game:
         self.engine.start_next_level()
 
     def change_state(self, result: Any) -> None:
+        """Change the current game state based on the result.
+
+        Args:
+            result (Any): The outcome from a state update or event, indicating the next state.
+        """
         if result == 'playing':
             self.engine.ready_sound.fadeout(1000)
             self.reset_engine()

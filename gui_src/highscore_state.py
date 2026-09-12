@@ -14,10 +14,21 @@ ARROW_HOVER_COLOR = name_to_rgb('yellow')
 
 
 class HighscoreState(GameState):
+    """Represents the highscore screen of the game.
+
+    This state displays the top scores achieved by players, including their ranks and icons.
+    """
     def __init__(
         self, screen_width: int, screen_height: int,
         top_scores: dict[str, int]
     ) -> None:
+        """Initializes the HighscoreState.
+
+        Args:
+            screen_width (int): The width of the screen.
+            screen_height (int): The height of the screen.
+            top_scores (dict[str, int]): A dictionary mapping player names to their top scores.
+        """
         self.top_scores = top_scores
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -64,6 +75,14 @@ class HighscoreState(GameState):
         self.bg = AnimatedBackground()
 
     def handle_events(self, events: Any) -> Any:
+        """Handles user input events for the highscore state.
+
+        Args:
+            events (Any): A list of pygame events to process.
+
+        Returns:
+            Any: A string indicating the next state ('quit' or 'main'), or None.
+        """
         for event in events:
             if event.type == pygame.QUIT:
                 return 'quit'
@@ -75,9 +94,19 @@ class HighscoreState(GameState):
                     return 'main'
 
     def update(self) -> Any:
+        """Updates the highscore state logic.
+
+        Returns:
+            Any: None.
+        """
         self.bg.update(1 / 60)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Renders the highscore screen to the display.
+
+        Args:
+            screen (pygame.Surface): The main display surface to draw on.
+        """
         self.bg.render(screen)
         title = self.font_title.render("Highscores", True, TITLE_COLOR)
         hovered = self.arrow_rect.collidepoint(pygame.mouse.get_pos())

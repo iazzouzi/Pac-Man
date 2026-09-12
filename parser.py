@@ -190,8 +190,8 @@ class Parser:
                 config.level_max_time = level_max_time
             else:
                 print(
-                    "Error: Level max time must be a positive float or integer "
-                    "between 0 and 1200"
+                    "Error: Level max time must be a positive float"
+                    " or integer between 0 and 1200"
                 )
 
         return config

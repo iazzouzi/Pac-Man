@@ -253,18 +253,22 @@ class PlayerRenderer:
         self.last_frame_time = pygame.time.get_ticks()
         self.frame_duration = 100
 
-    def draw_player(self, screen: pygame.Surface) -> None:
+    def draw_player(
+            self, screen: pygame.Surface, direction: str | None
+            ) -> None:
         """Draws the animated player onto the screen.
 
         Args:
             screen (pygame.Surface): The pygame surface to draw on.
+            direction (str | None): The movement direction, or None to
+                    use the default right-facing animation.
         """
         now = pygame.time.get_ticks()
         if now - self.last_frame_time >= self.frame_duration:
             self.frame_index = (self.frame_index + 1) % 4
             self.last_frame_time = now
 
-        direction = self.player.direction or "right"
+        direction = direction or "right"
         frame = self.frames[direction][self.frame_index]
 
         w, h = frame.get_size()
@@ -815,7 +819,7 @@ class PlayingState(GameState):
                 self.engine.reset_after_death()
                 self.death_renderer.reset()
         else:
-            self.player_renderer.draw_player(screen)
+            self.player_renderer.draw_player(screen, self.direction)
 
         self.hud.render(screen)
 

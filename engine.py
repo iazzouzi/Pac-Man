@@ -6,6 +6,8 @@ from algo import next
 from typing import Any, Optional
 from models import Config, Player, Ghost
 from mazegen import MazeGen
+import sys
+import os
 
 
 class Engine:
@@ -368,3 +370,19 @@ class Engine:
         for dict_ in data:
             loaded[dict_['name']] = dict_['score']
         return {key: loaded[key] for key in list(loaded)[:10]}
+
+    @staticmethod
+    def get_asset_path(relative_path: str) -> str:
+        """Get the absolute path to an asset, compatible with PyInstaller.
+
+        Args:
+            relative_path: The relative path to the asset file.
+
+        Returns:
+            The absolute path to the asset file.
+        """
+        try:
+            base_path = sys._MEIPASS  # type: ignore
+        except AttributeError:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)

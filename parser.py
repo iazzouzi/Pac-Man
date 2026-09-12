@@ -73,9 +73,10 @@ class Parser:
             SystemExit: If the argument count is wrong, the file is
                 missing/unreadable, or the JSON is malformed.
         """
-        if len(sys.argv) != 2:
-            raise SystemExit("Error: Invalid number of arguments")
-        file = sys.argv[1]
+        if len(sys.argv) > 1:
+            file = sys.argv[1]
+        else:
+            file = "config.json"
         Parser.filePreprocess(file)
         try:
             with open(file) as infile:
